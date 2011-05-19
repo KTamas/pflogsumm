@@ -1,0 +1,771 @@
+ChangeLog for pflogsumm.pl
+
+
+    [Note: Let me know if you would like to be notified as new versions
+     are released.  The latest released version can always be found at
+     http://jimsun.LinxNet.com/postfix_contrib.html.]
+
+
+rel-1.1.3	20100320
+
+    Added long-awaited switches to optionally reduce detail reporting:
+    --bounce_detail=N, --deferral_detail=N, --reject_detail=N,
+    --smtp_detail=N, smtpd_warning_detail=N, and --detail=N.  Setting
+    any of them to 0 suppresses that detail entirely.  --detail=N sets
+    the default for all of them, as well as for -u=N and -h=N.
+
+    With the above enhancements, the following switches are depreciated,
+    and will eventually be removed: --no_bounce_detail,
+    --no_deferral_detail, --no_reject_detail and --no_smtpd_warnings.
+    They are replaced by setting the desired --*_detail=0.  They still
+    work, but using them generates a warning.
+
+    Added support for parsing logs with RFC 3339 timestamps.  Thanks
+    and a tip o' the hat to sftf-at-yandrex-dot-ru for the heads-up
+    and the code contribution.  (N.B.: My code does not require a
+    command-line switch.  The format is detected automatically.)
+
+    Fixed some --ignore-case inconsistincies.  Thanks and a tip o'
+    the hat to Richard Blanchet (richard-dot-blanchet-at-free-dot-fr)
+    for the heads-up and the diff.
+
+    Fixed parsing bug that resulted in attempts to treat
+    kind-of-IPv4-looking strings as IPv4 addresses.  (I really need to
+    improve reject/defer/etc. "reason" parsing to fix this properly.)
+    Thanks to Joseph Vit (jvit-at-certicon-dot-cz) for the bug
+    report.
+
+rel-1.1.2	20080629
+
+    Fixed bug with calculating yesterday's date in vicinity of DST
+    changes.  (Thanks and a tip o' the hat to Wieland Chmielewski
+    for bringing the problem to my attention.)
+
+    Added missing "underlining" to some (sub-)section titles for
+    consistency.
+
+
+rel-1.1.1	20070406
+
+    Fixed to parse Postfix-2.3 (and beyond) logfiles.  Thanks to
+    whomever contributed to
+
+	http://bugs.gentoo.org/show_bug.cgi?id=144236
+
+    Removed support for vmailer.
+
+    Removed "SMTPD_STATS_SUPPORT" "fences" in code in favour of code
+    to automatically detect the availability of Date::Calc.  If
+    --smtpd_stats is specified and Date::Calc is not installed, now
+    bails-out with friendly message.  (Adapted from suggestion and
+    examples provided by David Landgren <david-at-landgren-dot-net>.
+    Thanks!)
+
+    Removed rem_smtpd_stats_supp.pl utility from distribution.  (No
+    longer needed.)
+
+    Memory footprint improvement: Pflogsumm no longer stores data for
+    reports that are supressed via --no_<mumble> switches.
+
+    Removed extraneous arguments in two calls to print_nested_hash
+    that would result in the "quiet" flag being ignored.  Thanks to
+    Pavel Urban (pupu-at-pupu-dot-cz) for bringing that to my
+    attention.
+
+    Added notes to FAQ about translations and i18n, about mismatching
+    "received"/"delivered" counts, about bug in calculating "yesterday,"
+    and about John Fawcett's "prepflog."
+
+
+rel-1.1.0	20031212
+
+    Promoted 1.0.18 (Beta) to "production/stable" version release.
+
+
+rel-1.0.18	20031204
+
+    Fixed reject parsing for "DATA" smtpd rejects.
+
+
+rel-1.0.17	20031129
+
+    Fixed reject parsing to properly recognize bare "User unknown".
+    (Thanks to J.D. Bronson" <jeff_bronson-at-wixb-dot-com> for the
+    bug-report and sample logfile lines.)
+
+
+rel-1.0.16	20031128
+
+    Re-worked "to" and "from" field parsing in reject report handling to
+    make it more robust in pathological cases.  (Thanks to Paul Brooks
+    <paul-dot-brooks-at-metro1-dot-com> and Lars Hecking
+    <lhecking-at-nmrc-dot-ie> for the bug-reports and sample logfile
+    lines.)
+
+    Fixed warnings resulting from non-standard, extraneous syslog input.
+    (Thanks to Mathias Behrle <m123-at-arcor-dot-de> for the report.)
+
+    Fixed reject parsing to account for really atrocious garbage in
+    HELO strings, sender addresses and recipient addresses.  (Thanks to
+    Lars Hecking <lhecking-at-nmrc-dot-ie> for the bug-report and sample
+    logfile lines.)
+
+    Fixed reject parsing to properly recognize "CONNECT" smtpd rejects.
+    (Thanks to Mike Vanecek <postfix_list-at-mm-vanecek-dot-cc> for the
+    bug-report.)
+
+    Fixed reject parsing to properly recognize "User unknown in relay
+    recipient table."  (Thanks to Lars Hecking <lhecking-at-nmrc-dot-ie>
+    for the bug-report and sample logfile lines.)
+
+    Some code optimization resulting in 3-5% performance improvement.
+
+
+rel-1.0.15	20030914
+
+    Pflogsumm *should* now properly parse and handle log entries with
+    IPv6 addresses in them.  (Adapted from idea and code submitted by
+    Stefan `Sec` Zehl <sec-at-42-dot-org>.)
+
+    Fixed "User unknown in local recipient table" reject reports to
+    show target recipient address, rather then sending domain, to be
+    consistent with other "recipient" reports.  (Thanks to WC Jones
+    <sx-at-insecurity-dot-org> for the suggestion.)
+
+    Fixed parsing of "Recipient address rejected" for recipient
+    address verification (RAV) rejects.  (Thanks to Len Conrad
+    <LConrad-at-Go2France-dot-com> for the suggestion.)
+
+    FAQ additions regarding recommendations on how to format custom
+    reject reports for "best" results in Pflogsumm's output and note
+    regarding "non-standard" syslogd's.
+
+
+rel-1.0.14	20030909
+
+    Fixed bug in parsing for "Host/Domain Summary: Messages Received"
+    report improvement (rel-1.0.13) that resulted from (unexpected, to
+    me) lines such as
+
+	... postfix/smtpd[31430]: E02DDB04E: client=blurfl[1.2.3.4],
+	sasl_method=LOGIN, sasl_username=phred
+
+rel-1.0.13	20030907
+
+    The "Host/Domain Summary: Messages Received" report would show simply
+    "from=<>", for the host/domain, for postmaster bounces.  Pflogsumm now
+    substitutes the client hostname or IP address for these, unless it's
+    from the pickup daemon, in which case "from=<>" is retained.  (Note
+    that "Senders by message count/size" reports are unaffected by this
+    change.)
+
+    "Senders by message count" and "Recipients by message count" reports
+    are now secondarily sorted by domain, host and user parts.  (As a
+    side-effect:  So are "Senders by message size" and "Recipients by
+    message size" but, being as the odds are against numerous senders and
+    recipients having the same total message sizes, this change hasn't much
+    effect with those.)
+
+rel-1.0.12	20030902
+
+    Rejects, warns, etc. now print sub-category totals.  E.g.:
+
+	message reject detail
+	---------------------
+	  RCPT
+	    Relay access denied (total: 6)
+
+    (Adapted from idea and code submitted by blake7-at-blake7-dot-org.)
+
+    Reject, warning, etc. reports are now sorted by 2nd column (e.g.: IP
+    address, domain, etc.) within count.  (Adapted from idea and code
+    submitted by David Landgren <david-at-landgren-dot-net>.)
+
+    Added --no_smtpd_warnings (report) option.
+
+    Added --no_no_msg_size (report) option.
+
+    A couple of minor improvements to reject parsing/reporting.
+
+rel-1.0.11	20030617
+
+    This is a bug-fix release.
+
+    There was a problem in the way pflogsumm-1.0.8 through 1.0.10
+    handled the --syslog_name option: When --syslog_name was
+    specified, some log entries with the default "postfix" name would
+    be missed.  This revision may introduce incompatibilities if
+    you're logging two or more instances of Postfix to the same log.
+    See the docs included in the tarball for details.
+
+rel-1.0.10	20030219
+
+    Re-worked "% rejected" calculation to include messages discarded
+    and added "% discarded" calculation/display.
+
+rel-1.0.9	20030217
+
+    Bugfix: If Perl's -w is specified at run-time and there were no
+    messages delivered or rejected, uninitialized variable warnings
+    would be issued in the percent rejected calculation code.  Thanks
+    for Larry Hansford (and many others since!) for the bug report.
+
+rel-1.0.8	20030216
+
+    Bugfix: Fixed problem with "orig_to=<blurfl>" being parsed as
+    "to=<blurfl>".  This resulted in *very* wrong output.  Thanks to
+    Bjorn Swift for the report.
+
+    Added "% rejected" to Grand Totals "rejected" figure.  This is
+    calculated as: rejected / (delivered + rejected).  (I did this
+    purely because it amuses me.)
+
+    Bugfix: Fix, in reject processing, for truncated overly-long "to"
+    fields.  Thanks to Rick Troxel for reporting the problem.
+
+    Added --syslog_name option.  Thanks to Ben Rosengart for the
+    suggestion.
+
+rel-1.0.7	20021231
+
+    Corrected and improved message reject/reject warn/hold/discard
+    parsing.  Again.  (Thanks to Peter Santiago for reporting the
+    problem that initiated these improvements.)
+
+rel-1.0.6	20021230
+
+    Added support for reporting message reject warnings, holds and
+    discards.
+
+	Note: Message rejects, reject warnings, holds and discards
+	are all reported under the "rejects" column for the Per-Hour
+	and Per-Day traffic summaries.
+
+    More aggressive verp munging (again).  (Prompted, in part, by a
+    suggestion from Casey Peel.  Thanks!)
+
+    Verp munging now applied to sender addresses in smtpd reject
+    reports.
+
+	WARNING: Please note that verp munging is highly experimental!
+
+    Pflogsumm distribution changed to gzip'd tarball format.
+
+    Tightened-up parsing.  Thanks for Ralf Hildebrandt for noting and
+    reporting the problem.
+
+    Docs at the top of pflogsumm.pl changed to POD format for automated
+    manpage generation.
+
+    README added.
+
+    Automatically-generated manpage added.
+
+    "To Do" moved out of ChangeLog into separate file.
+
+    Package now includes convenience Perl script for removing smtpd
+    stats support for those who don't have Date::Calc, don't want to
+    install it and don't care about smtpd stats reporting.
+
+    Belated thanks to Len Conrad in regards to the Sender Address
+    Verification work in 1.0.5.
+
+rel-1.0.5	20021222
+
+    Fixed to parse smtpd rejects for Postfix versions as of 20021026.
+    (Retained compatibility with older versions of Postfix.)
+
+	Note: smtpd and header-/body-checks warn, hold and discard
+	messages are *not* currently parsed/reported.  I'll need to
+	get some logfile entries.
+
+    Fixed parsing to handle the new "sender address verification"
+    lines.
+
+    Added "--zero_fill" option to put zeros in columns that might
+    otherwise be blank in some reports. (Suggestion by Matthias
+    Andree).
+
+    Fixed "Message size exceeds fixed limit" parsing for reject
+    reporting.
+
+rel-1.0.4	20020224
+
+    Added "--no_*_detail" options.  (Suppresses some of the "detail"
+    reports.)
+
+    Added "--version" option.  (Thanks to "Guillaume")
+
+    Improved handling of "[ID nnnnnn some.thing]" stuff  (Thanks to
+    Blake Dunmire)
+
+    Repaired and optimized some of the "reject" parsing.
+
+    Added processing and report of smtp delivery failures.
+
+    Added --rej_add_from option: For those reject reports that list
+    IP addresses or host/domain names: append the email from address
+    to each listing.  (Note: does not apply to "Improper use of SMTP
+    command pipelining" report.)
+
+
+rel-1.0.3	20010520
+
+    Minor re-work of "reject: RCPT" parsing to account for Yet Another
+    Change in the logfile format.  (Semi-colon changed to a comma in
+    "blocked using rbl.maps.vix.com,".)
+
+
+rel-1.0.2	20010519
+
+    Took another whack at "verp" munging.  *sigh*
+
+    Added code to summarize "Improper use of SMTP command pipelining"
+    rejects by client.
+
+
+rel-1.0.1	20010518
+
+    Modified to catch "reject: header" log entries changed as of
+    postfix release-20010228 (?).  Prior versions of postfix had the
+    string "warning: " (where the qid normally is).  Thanks to Glen
+    Eustace <root@godzone.net.nz>, Len Conrad
+    <lconrad@go2france.com>, Daniel Roesen
+    <droesen@entire-systems.com>, Milivoj Ivkovic <mi@alma.ch> and
+    j_zuilkowski@hotmail.com (Jon Zuilkowski) for reports and/or
+    patches.
+
+    Fixed a couple of "uninitialized variable" problems.
+
+    Committed (actually starting with 20000925-01beta) to CVS.
+
+
+20000925-01
+
+    Added a line to compensate for (new?) "[ID nnnnnn some.thing]"
+    sub-strings that appear in logfile entries under Sun Solaris 8.
+    (At least.  Others?)
+
+    Note: Upon being committed to CVS, this became rel-0.9.0.
+
+
+20000916-01
+
+    Forgot to add "--problems_first" to the "usage" output and in the
+    synopsis at the top of the comments.
+
+
+20000908-01beta
+
+    Re-did what 20000907-02beta was *supposed* to be!  To wit:
+    replaced missing "--ignore_case" bugfix, "panic" entry processing,
+    improvements to "fatal" and "warning" message reporting and
+    missing "--mailq" option.  (Obviously: 20000907-02beta was
+    derived from the wrong code base.)
+
+
+20000907-02beta
+
+    Fixed bug in ISO date formatting that caused the month to be off
+    by one.  Thanks to Kurt Andersen <kurta@sitefs1a.spk.agilent.com>
+    for the report and the patch.
+
+    Fixed overflow of connect time reporting into days.  (Can happen
+    during weekly summaries for sites with large volumes of email.)
+    Thanks again to Kurt Andersen <kurta@sitefs1a.spk.agilent.com>
+    for the report and the fix.
+
+    Improved "rejects" reporting *again*.  Thanks to Thomas Parmelan
+    <tom@proxad.net> for the patch.
+
+    Added "--problems_first" option to print "problem" reports such as
+    bounces, defers, warnings, fatal errors, etc. before "normal"
+    reports.
+
+
+19991219-02
+
+    Fixed bug in code that prevented "--ignore_case" from actually
+    doing anything.  Thanks to Nadeem Hasan <nhasan@usa.net> for
+    reporting this and supplying the fix.
+
+
+19991219-01beta
+
+    Added the following caveat to the "Notes" section of Pflogsumm:
+
+	-------------------------------------------------------------
+	IMPORTANT: Pflogsumm makes no attempt to catch/parse non-
+		   postfix/vmailer daemon log entries.  (I.e.: Unless
+		   it has "postfix/" or "vmailer/" in the log entry,
+		   it will be ignored.)
+	-------------------------------------------------------------
+
+    Added reporting of "panic" log messages.  This was missed until
+    now!
+    
+    Increased reporting detail of "fatal" and "warning" entries.
+    (Actually, "warning" detail was increased in 19991120-01beta.
+    Neglected to note it then.)
+
+
+19991123-01 (unreleased)
+
+    Added "--mailq" option.  (Convenience factor.)  Runs Postfix's
+    "mailq" command at the end of the other reports.
+
+	-------------------------------------------------------
+	NOTE: If Postfix's "mailq" command isn't in your $PATH,
+	you'll have to edit the "$mailqCmd" variable located
+	near the top of pflogsumm to path it explicitly.
+	-------------------------------------------------------
+
+
+19991120-01
+
+    Tried once again to improve parsing of reject log entries.
+    Specifically: those associated with "RCPT" rejects.
+
+
+19991016-01 (not generally released)
+
+    Added --smtpd_stats.  Generates smtpd connection statistics.
+
+	---------------------------------------------------------------
+	NOTE: Support for --smtpd_stats requires the Date::Calc module
+	(available from CPAN).  If you don't want to go to the trouble
+	of fetching & installing that module, and you don't want smtpd
+	stats anyway, *carefully* identify all of the code sections
+	delimited by "# ---Begin: SMTPD_STATS_SUPPORT---" and
+	"# ---End: SMTPD_STATS_SUPPORT---" and remove them.
+	---------------------------------------------------------------
+
+
+19990909-01 (not generally released)
+
+    Added -i and --ignore_case options.  Causes entire email address
+    to be lower-cased instead of just the host/domain part.
+
+    Added "use locale".  (This means that the sorting order within
+    reports may be different from before--depending on how you have
+    your machine's locale set.)
+
+
+19990904-03
+
+    Improved "reason" parsing and reporting for bounced and deferred
+    messages.
+
+    Added parsing of "cleanup" reject lines to catch PCRE/regexp
+    rejects.
+
+    Added "reject" stats to per-hour and (on multi-day reports) per-
+    day reports.
+
+    Improved "warnings" report to show details.
+
+    A single message deferred multiple times showed up as multiple
+    deferrals--implying that multiple messages were deferred.  Now
+    shows "how many messages were deferred" and "how many deferrals"
+    as separate stats.
+
+    Changed display of "Grand Totals" to make it a bit more readable
+    (IMO).
+
+    Added "automatic perl finder" line for those systems that don't
+    support the "#!" notation.
+
+    By popular demand: added note to comments as to where pflogsumm
+    home page could be found :-).
+
+
+19990413-02
+
+    Fixed problem with last octet of IP address getting truncated in
+    reports when IP address used in place of unknown hosts.
+
+    Changed the way a few internal variables were handled to be
+    compatible with Perl 5.003.  Don't run it under Perl 5.003 with the
+    "-w" perl switch, tho!  It will issue lots of warnings.  All tests
+    I performed indicated that it produces the correct output, however.
+
+	------------------------------------------------------------
+	NOTE: While this version was tested to work with Perl 5.003,
+	I recommend that you upgrade to 5.004 or later.  I will not
+	guarantee that I'll remember to do the full regression-
+	testing that I usually do with 5.003 as well.
+	------------------------------------------------------------
+
+
+19990411-01
+
+    NOTICE: As of this version of pflogsumm.pl, the "-c" switch is
+	    GONE!  (As per the previous notice.)
+
+    Added "--help" option to emit short usage message and bail out.
+
+    Added "--iso_date_time" switch to change displays of dates and times
+    to ISO 8601 standard formats (CCYY-MM-DD and HH:MM), rather than
+    "Month-name Day-number CCYY" and "HHMM" formats (the default).
+
+    Added "--verbose_msg_detail" switch.  This causes the full "reason"
+    to be displayed for the message deferral, bounce and reject summaries.
+    (Note: this can result in quite long lines in the report.  Also note
+    that there have been a couple of subtle changes in the "reason"
+    parsing/reporting in the default mode (no "--verbose_msg_detail".)
+
+    Added "--verp_mung" option.  The problem this addresses is "VERP"
+    generated (??? so far as I can tell!) addresses (?) of the form:
+
+	"list-return-NN-someuser=some.dom@host.sender.dom"
+
+    These result in mail from the same "user" and site to look like it
+    originated from different users, when in fact it originates from the
+    same "user."  There are presently two "levels" of address munging
+    available.  With no numeric argument (or any value less than 2), the
+    above address will be converted to:
+
+	"list-return-ID-someuser=some.dom@host.sender.dom"
+
+    In other words: the numeric value will be replaced with "ID".
+
+    By specifying "--verp_mung=2", the munging is more "aggressive",
+    converting the above address to something like:
+
+	"list@host.sender.dom"
+
+    Which looks more "normal."
+
+    (Actually: specifying anything less than 2 does the "simple" munging
+    and anything greater than 1 results in the more "aggressive" hack
+    being applied.)
+
+    Added "--uucp_mung" switch for consistence with "--verp_mung".
+
+
+19990321-01
+
+    NOTICE: As of this version of pflogsumm.pl, versions of VMailer
+	    prior to 19981023 are no longer supported.  Sorry.
+	    Pflogsumm-19990121-01.pl will be made permanently
+	    available from now on for those with out-of-date versions
+	    of VMailer prior to 19981023.
+
+    NOTICE: As of this version of pflogsumm.pl, the "-c" switch is
+	    DEPRECIATED.  This version is transitional and retains it.
+	    The next version will not have it.  Subsequent versions
+	    may re-use it for another purpose.  Use the "-h" and "-u"
+	    switches instead.
+
+    Added "-h" and "-u" switches to provide finer-grained control over
+    report output.  Depreciated "-c".
+
+    Added "deferred" and "bounced" to "Grand Totals", "by-day" and "by-
+    hour" reports.
+
+    Added "by-host/domain" reports.  For sent (delivered) and received
+    messages:  lists message count, total size of messages and
+    host/domain.  For delivered messages: also lists number of deferred
+    messages and average and maximum delivery time.  Both reports sorted
+    by message count in descending order.
+
+    Grand totals also now list number of recipient and sender
+    hosts/domains.
+
+    Re-wrote "by-user" data collection storage to reduce memory consumption
+    by in-memory hashes.
+
+    Moved "credits" from pflogsumm.pl to this file.
+
+
+19990121-01
+
+    Now accounts for forwarded messages.
+
+    Side-effects of the above:
+    
+	. Total messages size now broken-out into total bytes received
+	  and total bytes delivered.
+	. Count of forwarded messages now reported.
+	. Postfix-internally-generated messages (e.g.: Postmaster
+	  notifications of bounces) are no longer counted as "received".
+	  (They do, however, show up as "delivered".)
+	. Forwarded addresses no longer show up as "recipients" (just
+	  as with aliases and mailing lists).
+
+	Note that "delivered" will exceed "received" when messages
+	are forwarded because of additional header lines.
+
+
+19990116-01
+
+    Added processing for "reject" log entries.
+
+    Expanded detail of "deferred" and "bounced" log entries to include
+    "reason".
+
+
+19990110-05
+
+    Added "messages received/delivered by hour" and "messages
+    received/delivered by day" reports.  See the "Notes" section in the
+    documentation for details on how these behave.
+
+    Broke-out total message count to "messages received" and "messages
+    delivered".
+
+    (For the above two enhancements: "postfix/pickup" and "postfix/smtpd"
+    lines are now processed.  They used to be discarded.)
+
+    Renamed "summary" report to "Grand Totals".
+
+    Added code to parse date & time stamps from log entries.  This was
+    needed, in part, for the "messages per-hour/day" reports.  It would
+    have been necessary for future enhancements in the way of date- &
+    time-based processing anyway.
+
+    Added "Notes" section to docs at top of code.
+
+
+19990109-01
+
+    Improved display of large integer values.
+
+
+19990107-01
+
+    Bugfix only.  Data for "extended detail" listing was being built
+    even if "-e" not specified.  This resulted in unexpected excessive
+    memory consumption when crunching large amounts of data.
+
+    Added warning about memory consumption when "-e" option specified.
+
+
+19990103-01
+
+    Further improvement to "accuracy" of by-domain-then-logname sort.
+    (Presently used only by "extended detail" listing).  For comparison
+    purposes:  mungs "machine(s).host.dom" into "host.dom.machine(s)" so
+    sort is keyed on "base" domain name before machines within the
+    domain.  Does *not* attempt to reverse the order of the "machine(s)" -
+    so within a particular "base" domain, may not come out in quite the
+    right order.  ("foo.bar.some.dom" will come out before
+    "sales.acme.some.dom", for example.)
+    Also works for 2x2-style domain names.  (I.e.: "some.do.co")
+
+
+19990102-01 (never released)
+
+    Added "mung UUCP-style bang-paths" switch (-m).
+
+    Improved performance and "accuracy" of by-domain-then-logname sort
+    used by (only at present) "extended detail" listing.
+
+
+19990101-02
+
+    Added "extended detail" option (-e).  At present this includes only a
+    per-message detail listing, which lists per-message detail sorted by
+    sender domain, then sender username, then by queue i.d.
+
+    Improved docs a bit.
+
+
+19990101-01
+
+    Replaced warning message when message size unavailable in favor of
+    producing a report of these, sorted by queue i.d.  Unlike the other
+    reports, this report header is not emitted at all if there are none of
+    these.  (Always acts as if the -q switch had been specified).
+
+
+19981231.01
+
+    Added experimental code to lower-case all domain names so that
+    "user@foo.dom" and "user@FOO.DOM" will come out the same.
+
+    Added test for existence of message size value when "to=" records are
+    being processed.  This was necessary for cases in which the logfile
+    entry containing the "status=sent" record is not processed at the same
+    time as the logfile containing the "size=nnnn" record.  Note that this
+    will produce a summary that will show recipient counts without
+    matching recipient sizes.  The only way to cure this would be to
+    create a separate disk file to "memorize" message sizes.  (Which would
+    introduce a whole new raft of problems.)
+
+    Added warning message (emitted to stderr) when the situation above is
+    detected.
+
+    Fixed "usage" message to indicate you can specify files on command
+    line
+
+    Wrapped a couple of long lines in the comments and code.
+
+    Added (temporary) version numbering scheme.
+
+    Started this log.
+
+    Other changes/enhancements since previous un-version-numbered
+    versions:  deals with log entries for VMailer as well as Postfix, more
+    robust parsing of "to=" and "from=" fields (now handles spaces in
+    these), eliminated double-counting of message sizes (happened when 
+    delivery was deferred), re-structured parsing to be more robust (not-
+    to-mention correct!), added "grand summary" report at top (total
+    messages, total size, number of senders and recipients).
+
+
+Credits
+
+    [Note: The credits reflect suggestions and code contributions that
+     have actually been added.  If your contribution doesn't appear
+     here, it may simply mean that it hasn't been added yet.  (In which
+     case it should be on the list above.)  On the other hand: if I
+     failed to credit you for something that *has* been added, please
+     let me know!]
+
+    Paul D. Robertson <proberts@clark.net>
+
+	For much testing and patience and many good suggestions on
+	how pflogsumm could be improved.
+
+    Simon J Mudd <simon.mudd@alltrading.com>
+
+	For the following code contributions:
+
+	    Add "deferred" and "bounced" to "by hour" reports.
+	    (I also added these to "by day" reports and "Grand
+	    Totals".)
+
+	    "VERP" (?) address munger (less-agressive version)
+
+	Suggestion for "by domain" delivery delay report.
+
+	For the --smtpd_stats suggestion.
+
+    Anders Arnholm <anders@arnholm.nu>
+
+	For pointing out the problem with forwarded messages.
+
+    Walcir Fontanini <walcir@densis.fee.unicamp.br>
+
+	For pointers to changes to make for Perl 5.003 compatibility.
+	(Added to 19990413-02beta.)  (Which I will *try* to keep in
+	mind!)
+
+    Eric Cholet <cholet@logilune.com>
+
+	For the --ignore_case patch.
+
+    Kurt Andersen <kurta@sitefs1a.spk.agilent.com>
+
+	For the ISO date formatting month-off-by-one patch and the
+	connect time overflow fix.
+
+    Thomas Parmelan <tom@proxad.net>
+
+	For improved "rejects" reporting patch.
+
+    Glen Eustace <root@godzone.net.nz>
+
+	Patch to fix "reject: header" matching after Wietse changed
+	the logfile format.

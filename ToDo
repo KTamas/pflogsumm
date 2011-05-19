@@ -1,0 +1,74 @@
+
+To Be Done (Maybe)
+
+    date ranges, "lastweek", etc.?
+
+    (options for?) break-down by local vs. non-local?, further
+    "drill-downs" to sender/recipient domains?
+
+    Separate reports by-domain?  (Would require that pflogsumm write files
+    instead of emitting to stdout?  Or maybe that would be an option?)
+    Separate options for sender domain and receiver domain?  Or perhaps
+    sender address and receiver address regex "filtering" options?
+
+    lower-case domains (Done)
+
+    don't k-ize msg counts?  (Or do so at a higher boundary?) (Done)
+
+    implement proper version numbering (interim version numbering in
+    place) (use SCCS or RCS?) (Done)
+
+    add changelog (Done)
+
+    Expand docs (in code?)
+
+    Re-do docs to POD format? (Done)
+
+    Improve UUCP-style bang-path handling
+
+    Add option to use disk-based hash files instead of in-memory so
+    processing logfiles with lots of postfix log entries doesn't run
+    the machine out of memory?  (This would really whack performance!)
+    (Maybe only needed with "-e" option.)
+
+    Add another "step" to integer processing: "g"?  (Display formatting
+    will presently mess up at values exceeding 999999m.)
+
+    Internationalization?  Necessary?  There's English-language month
+    abbreviations hard-coded in pflogsumm.  I'm admittedly real weak
+    in this area. (Covered by ISO 8601 option [below]?)
+
+    Add option to lower-case entire addresses, rather than only the
+    domains.  (Or make that the default, and add an option to make
+    it just domains?) (The RFCs say username parts shouldn't be
+    touched!)  (Done)
+
+    Add percentage-of-total to all (?) reports?
+
+    Add ability to handle compressed files within pflogsumm?
+    (Unlikely)
+
+    SMTP logging by host (msgs, connects) (add to new "by-domain"
+    reports?)  (Done)
+
+    UUCP logging of some sort?  (At least what is sent to what
+    host/gateway.  Since rmail receives incoming, don't know as I
+    can do anything there.)
+
+    Option for ISO 8601 standard date & time formats. (Done)
+
+    Option for specifying "host" (for multi-host logfiles)?
+
+    Add POSIX regexp body_checks "bypass" docs to FAQ.  (Liviu Daia,
+    Noel Jones)
+
+    Add "helper" program to distribution based on Wolfgang Zeikat's
+    MIME::Lite suggestion for the body_checks issue?  (Will want to
+    make it read from stdin, securely create tempfile and clean up
+    afterward.)
+
+    Expand on SAV reporting? (Len Conrad)
+
+    Add "reject details" on "too many errors after <SMTP command>" log
+    lines? (Len Conrad)
+

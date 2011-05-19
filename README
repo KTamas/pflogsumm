@@ -1,0 +1,41 @@
+
+Pflogsumm README
+
+There's not much to installing pflogsumm, so it's all manual.
+
+    1. Unpack the distribution (if you're reading this, you've already
+       gotten that far)
+
+    2. Copy or move pflogsumm.pl to some directory from which you'll
+       want to execute it.  Maybe rename it to just "pflogsumm."
+       Watch the ownerships and permissions.  Make sure it's executable.
+
+       E.g.:
+
+	    cp pflogsumm.pl /usr/local/bin/pflogsumm
+	    chown bin:bin /usr/local/bin/pflogsumm
+	    chmod 755 /usr/local/bin/pflogsumm
+
+    3. If there's a manual page available (pflogsumm.1), copy that to
+       /usr/local/man/man1 or wherever you stash local manpages.  Make
+       sure it's world-readable.
+
+       E.g.:
+
+	    cp pflogsumm.1 /usr/local/man/man1/pflogsumm.1
+	    chown bin:bin /usr/local/man/man1/pflogsumm.1
+	    chmod 644 /usr/local/man/man1/pflogsumm.1
+
+    4. Read the man page (or the top of pflogsumm itself) for usage.
+
+    5. Check the FAQ (pflogsumm-faq.txt)
+
+    6. Configure your cron jobs if you're going to run pflogsumm on an
+       automatic, scheduled basis.  There are tips in the manpage and
+       the FAQ.
+
+That's about it.
+
+As the manpage and FAQ both note: pflogsumm requires the Date::Calc
+Perl module if you want to use --smtpd_stats.
+

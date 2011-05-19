@@ -1,0 +1,754 @@
+
+FAQ for Pflogsumm.pl - A Log Summarizer/Analyzer for the Postfix MTA
+
+Introduction
+
+    I wouldn't have believed it.  What started out mostly as a light-
+    hearted exercise in improving my facility with Perl--with the hope
+    that something useful would come out of it as well--has turned out to
+    be a somewhat popular utility.  And as more Admins find out about
+    postfix, and more end up trying pflogsumm.pl,  many of the questions,
+    suggestions, and enhancement requests are becoming "frequently
+    asked".  So odd as it seems (to me, at any rate), it looks like it's
+    time for a FAQ.
+
+
+Index of pflogsumm.pl Frequently Asked Questions (in no particular order)
+
+     1. Project Status
+     2. "Could You Make" or "Here's A Patch To Make" Pflogsumm Do ...
+     3. Requires Date:Calc Module
+     4. Built-In Support for Compressed Logs
+     5. Processing Multiple Log Files
+     6. Time-Based Reporting and Statistics
+     7. By-domain Listings
+     8. Reject, Deferred and Bounced Detail Info
+     9. "Orphaned" (no size) Messages
+    10. Pflogsumm misses/mis-diagnoses/mis-reports, etc. <whatever>
+    11. Pflogsumm is generating lots of "uninitialized value" warnings
+    12. Pflogsumm just doesn't work or doesn't report anything
+    13. Postfix Rejects Pflogsumm Reports Because Of Body Checks
+    14. Pflogsumm Reports Double Traffic When Anti-Virus Scanner Used
+    15. Pflogsumm's numbers don't add up
+    16. Hourly stats for reports run without "-d" option are halved
+    17. How Do I Get Pflogsumm To Email Reports To Me Daily/Weekly/etc.?
+    18. How Can I View Pflogsumm's Reports In My Web Browser?
+    19. New Red Hat install - Pflogsumm no longer works!
+    20. How can I best format my custom reject messages for display in
+        Pflogsumm's output?
+    21. Pflogsumm doesn't understand my log file format
+    22. Why Isn't There Any Mention Of "Monkey Butler" In The FAQ?
+    23. Translating Pflogsumm (Support for Internationalization)
+    24. Pflogsumm may sometimes calculate "yesterday" incorrectly
+    25. Sending Logfile Samples
+    26. From Where Can I  Obtain Pflogsumm?
+
+
+1. Project Status
+
+    New work on Pflogsumm is sporadic.  It pretty much does everything I
+    need it to do and, so far as I can tell, pretty much what most other
+    people need it to do.  And my time is limited.
+
+    I'll still take bug reports.  I'll still fix bugs.  (But I promise no
+    time-line.)  I'll still answer questions (as time allows).  And I
+    *may* add the occasional enhancement or whatever--as the mood
+    strikes--but Pflogsumm is pretty much a "finished work" as far as I'm
+    concerned.
+
+
+2. "Could You Make" or "Here's A Patch To Make" Pflogsumm Do ...
+
+    Unless it's a *bug* fix, please see: "1. Project Status"
+
+    To the argument "But it's a patch, all you have to do is...," the
+    answer is: "Not quite."  Every time I make a change to Pflogsumm I
+    have to run it through a series of regression checks to make sure the
+    change didn't break something.  Then there's the commit,
+    documentation, web page update, etc. cycle.
+
+    I'm particularly unlikely to add code to Pflogsumm to account for
+    non-standard Postfix log entries.  "Non-standard" being defined as
+    "other than what Wietse's code does."  Or additional stats gathering
+    that nobody else has requested and strikes *me* as of limited interest
+    or use.  In addition to the development cycle, there's the issue of
+    "code bloat."  Pflogsumm already takes enough (too much?) time and
+    memory on busy machines with large logs.  I'm not prone to make this
+    worse for the sake of these things.
+
+    See Also: 21. Pflogsumm doesn't understand my log file format
+
+
+3. Requires Date::Calc Module
+
+    Pflogsumm requires the Date::Calc module.  You can download and
+    install the Date::Calc module from CPAN.  It can be found at:
+
+	http://search.cpan.org/search?module=Date::Calc
+
+    Or you can remove the code that's dependent on the Date::Calc module.
+    For the convenience of folks that would prefer to take this approach,
+    I've "fenced" all such code like this:
+
+	# ---Begin: SMTPD_STATS_SUPPORT---
+	      .
+	      .
+	      .
+	<bunch of code>
+	      .
+	      .
+	      .
+	# ---End: SMTPD_STATS_SUPPORT---
+
+    However, if you do this you will lose support for --smtpd_stats.
+
+    Later versions of the Pflogsumm distribution include a script to
+    semi-automate removing smtpd stats support, if you so-desire.
+
+    As of Pflogsumm-1.1.1, the presence of Date::Calc is optional.  If you
+    don't want to use the Pflogsumm options that depend upon it, you
+    neither need Date::Calc, nor is it necessary to manually remove the
+    code that depends upon it.
+
+
+4. Built-In Support for Compressed Logs
+
+    I took a look at this.  There is a Perl module (which I downloaded,
+    built, and installed here) to interface to libz, but after considering
+    the changes that would be necessary--and the fact that those changes
+    would require that potential users have to download/build/install libz
+    (and of the correct version) and the additional Perl module, I decided
+    to forego this enhancement.
+
+    I could just open a pipe within Pflogsumm and use zcat/gunzip/gzip.
+    That would depend upon a) them being there [probably a safe bet--
+    considering the logs somehow got into that format :-), but...] and b)
+    one of these either being in the path or having an environment
+    variable or a script variable or...
+
+    The thing is, in the latter case there's really no "savings" over
+    simply piping into Pflogsumm in the first place.  Multiple processes
+    get spawned, pipes opened, etc. either way.  It would add a little
+    convenience, is all.
+
+    So I could do it.  And there are a couple of ways I could do it.  And
+    my mind is certainly still open on the issue.  I'm just not convinced
+    there's a good reason to do it, is all.  And I'd like to avoid
+    "creeping over-feature-itis" if I can.  My position is *not* set in
+    stone on this issue.  In the mean-time:
+
+	zcat /var/log/maillog.0.gz |pflogsumm.pl <args...>
+
+	or
+
+	gunzip </var/log/maillog.0.gz |pflogsumm.pl <args...>
+
+    should do the trick quite nicely for you.
+
+    If you've a complex situation, for example: your logs aren't rotated
+    exactly at midnight, you might try something like:
+
+	(zcat /var/log/maillog.0.gz; cat /var/log/maillog) \
+	    |pflogsumm.pl -d yesterday
+
+    See Also:  5. Processing Multiple Log Files
+              17. How Do I Get Pflogsumm To Email Reports To Me
+		  Daily/Weekly/etc.?
+
+
+5. Processing Multiple Log Files
+
+    When processing multiple log files (say: an entire weeks worth of logs
+    that are rotated daily), it is important that Pflogsumm be fed them in
+    chronological order.  For performance and memory conservation reasons,
+    Pflogsumm relies on log messages "arriving" in the order in which they
+    were created.
+
+    If you do something like this:
+
+	pflogsumm /var/log/maillog*
+
+    you might not get what you expect!  Instead, try something like:
+
+	pflogsumm `ls -rt /var/log/maillog*`
+
+    A more complex example, where compressed logs are involved:
+
+	(zcat `ls -rt /var/log/maillog.*.gz`; cat /var/log/maillog) \
+	    |pflogsumm.pl
+
+    Obviously, this depends on the file modification times for your logs
+    being reflective of their chronological order.  If that can't be
+    trusted, you're gonna have to get ugly.  Like in enumerating each
+    file, or as in:
+
+	(for each in 3 2 1 0; do
+	     zcat "/var/log/maillog.$each.gz"
+	 done
+	 cat /var/log/maillog) |pflogsumm.pl
+
+    or (somewhat more efficiently--by running zcat only once):
+
+	(zcat `for ea in 3 2 1 0; do echo "/var/log/maillog.$ea.gz";
+	 done`; cat /var/log/maillog) |pflogsumm.pl
+
+    [Note: I didn't actually run these.  So you would be well-advised
+     to double-check them.]
+
+    See Also:  4. Built-In Support for Compressed Logs
+              17. How Do I Get Pflogsumm To Email Reports To Me
+		  Daily/Weekly/etc.?
+
+
+6. Time-Based Reporting and Statistics
+
+    There has been a small assortment of requests for different time
+    statistics reporting.  And adding this would be relatively straight-
+    forward.  (Just have to reach a consensus on exactly *what* should be
+    reported, and how.  This could easily get out of hand!)
+
+    There's only one *small* problem.  Ironically, it's time.
+
+    I've experimented with Pflogsumm grokking the log timestamps.  As a
+    matter-of-fact: the enhancement added in the 19990110-05 version
+    required that I do some of this.  My first pass was to use the Perl
+    timelocal() function to convert those sub-strings to an integer for
+    subsequent comparison operations.  Imagine my surprise when
+    performance of the resulting code was a factor of five (5) times
+    slower than that of its predecessor.  After a "remove the statements
+    until it got fast again" exercise, I found that the culprit was
+    timelocal().
+
+    As of version 19990321-01, Pflogsumm does by-domain stats reporting of
+    average and maximum delivery time by host/domain.  And an even earlier
+    version added by-hour and by-day message count reporting.  Anything
+    much beyond these is going to get "expensive."
+
+    If/when any additional time-based stats reporting is added: I think
+    they are definitely going to be optional.
+
+    One way you can make up for Pflogsumm's deficiency in this respect is
+    to use good ol' Unix tools like "grep" to pre-process your log files
+    before feeding them to Pflogsumm.  E.g.:
+
+	grep "Feb  9" /var/log/maillog |pflogsumm what_ever_args
+
+    Note that single-digit days-of-the-month have an additional leading
+    space in the logfiles, where the digit for two-digit dates would be.
+
+
+7. By-domain Listings
+
+    I figured on the desire for this one from the start.  There are many
+    possibilities:
+
+	1) A single report, split by domain
+	2) An option to limit reporting to a particular domain
+
+    This issue is kind of tricky.  The popularity of Unix amongst
+    SysAdmins is testimony to the beauty of being able to wire- together
+    small, simple tools so that one can generate output to ones taste.
+    Anything I do is likely to make some Admins happy and others wishing
+    I'd done it "the other way".
+
+    One thought that occurred is to perhaps provide a couple of options
+    that would allow one to limit a particular report to
+
+	sender=regular_expression and/or recipient=regular_expression
+
+    The problem with this solution is that an Admin desiring to emit
+    custom reports for multiple domains would have to re-process the same
+    log multiple times--once for each desired domain.
+
+    So I'm still thinking about this one.
+
+
+8. Reject, Deferred and Bounced Detail Info
+
+    I've actually only received one query about this so far, but there are
+    bound to be more.  So...
+
+    The "detailed" information in the "Reject", "Deferred" and "Bounced"
+    reports is a compromise.  Just take a stroll through your postfix logs
+    some day and observe the variation in how the "reason" for a
+    particular reject, defer, or bounce is reported.  Without putting a
+    lot of static comparisons for each-and-every case into the analyzer, I
+    have absolutely no hope is doing this very well.
+
+    Emitting the entire "reason" is not good, either.  The entire "reason"
+    string can be very long.  Depending on what somebody is using to
+    display Pflogsumm's output, the lines may well wrap-- producing output
+    that is no more readable than just grepping the logs.
+
+    And anything more I do to this end may soon be rendered moot.  After
+    Wietse gets most of the more important functional stuff out of the
+    way, Postfix logging is going to be completely re-written.  (Oh boy,
+    won't that be fun!)  I'm hoping I'll be able to get some input into
+    the process so the formatting is more amenable to automated
+    processing.  Wietse has indicated that such would be the case.
+
+    Also, please note my primary objective behind Pflogsumm (besides the
+    entertainment value): "just enough detail to give the administrator a
+    ``heads up'' for potential trouble spots."  It's not *supposed* to do
+    away with manual inspection entirely.
+
+    For those that really want all that extra detail in the log summary
+    reports, specify the "--verbose_msg_detail" switch.
+
+    See Also: 25. Sending Logfile Samples
+
+
+9. "Orphaned" (no size) Messages
+
+    The Problem:
+
+	Message size is reported only by the queue manager.  The message
+	may be delivered long-enough after the (last) qmgr log entry that
+	the information is not in the log(s) processed by a particular run
+	of pflogsumm.pl.
+
+    The Result:
+
+	"Orphaned" messages.  These are reported by Pflogsumm as "Messages
+	with no size data."
+
+	This, of course, throws off "Recipients by message size" and the
+	total for "bytes delivered."  ("bytes in messages" in earlier
+	versions.)
+
+    The Solution:
+
+	"Memorize" message sizes by queue i.d.  Easy in theory.  Difficult
+	in practice.  At least at the moment.
+
+	You see, if Pflogsumm's going to "memorize" message sizes, it has
+	to have some definitive way to know when to delete a no-
+	longer-needed reference.  Otherwise the memory file will just grow
+	forever.
+
+    As with the "Reject, Deferred and Bounced Detail Info" issue above,
+    I'm hoping the get some input into future changes in logging issues.
+    In any event: maybe whatever comes out of the logging redesign will
+    provide a solution.
+
+    As of Pflogsumm version 1.0.12, the "Messages with no size data" report
+    can be turned off.
+
+
+10. Pflogsumm misses/mis-diagnoses/mis-reports, etc. <whatever>
+
+    Are you using a real old version of VMailer?  As of pflogsumm.pl
+    version 19990220-06, versions of VMailer prior to 19981023 are no
+    longer supported.  Sorry.  Pflogsumm-19990121-01.pl will be made
+    permanently available from now on for those with out-of-date versions
+    of VMailer prior to 19981023.
+
+    Are you processing your log files in chronological order?  See item
+    "5: "Processing Multiple Log Files".
+
+    Pflogsumm.pl is being developed by me on my rather small-scale server
+    at home.  There are only two users on the system.  And I do no
+    mail-forwarding.  So the log samples I have to work with are
+    commensurately limited.
+
+    If there's something that Pflogsumm is not doing, or not doing right,
+    let me know what it is, what you think it ought to do, and send me a
+    representative sample of *real* log entries with which to work.
+
+    See Also: 5. Processing Multiple Log Files
+	      12. Pflogsumm just doesn't work or doesn't report anything
+	      15. Pflogsumm's numbers don't add up
+              19. New Red Hat install - Pflogsumm no longer works!
+	      21. Pflogsumm doesn't understand my log file format
+              25. Sending Logfile Samples
+
+
+11. Pflogsumm is generating lots of "uninitialized value" warnings
+
+    Are you using a version of Perl lower than 5.004_04?  Perhaps with a
+    "beta" version of pflogsumm.pl?  If so, try turning off the "-w"
+    switch.  Pflogsumm as of 19990413-02beta appeared to work correctly
+    with Perl 5.003 in spite of the warnings.  (Those warnings didn't
+    appear with Perl 5.004.)
+
+    I don't guarantee that I'll remember to test future versions of
+    pflogsumm.pl against 5.003, but I'll try to :-).
+
+    You really should consider upgrading your Perl to 5.004 or later.
+
+
+12. Pflogsumm just doesn't work or doesn't report anything
+
+    Did you *download* Pflogsumm as opposed to grabbing it by
+    "copy-and-paste" from a browser?  Copy-and-paste can result in lines
+    being unintentionally wrapped and hard-tabs being converted to
+    spaces.  This will break Pflogsumm.
+
+    Also, I've received a couple of reports by people downloading
+    Pflogsumm with Lynx that the download has long lines wrapped.
+    Naturally, this breaks Pflogsumm.
+
+    See Also: 10. Pflogsumm misses/mis-diagnoses/mis-reports, etc.
+	       <whatever>
+              19. New Red Hat install - Pflogsumm no longer works!
+	      21. Pflogsumm doesn't understand my log file format
+
+
+13. Postfix Rejects Pflogsumm Reports Because Of Body Checks
+
+    You configure Postfix to do body checks, Postfix does its thing,
+    Pflogsumm reports it and Postfix catches the the same string in the
+    Pflogsumm report.  There are several solutions to this.
+
+    Wolfgang Zeikat contributed this:
+
+	#!/usr/bin/perl
+	use MIME::Lite;
+
+	### Create a new message:
+	$msg = MIME::Lite->new(
+	    From     => 'your@send.er',
+	    To       => 'your@recipie.nt',
+	    # Cc     => 'some@other.com, some@more.com',
+	    Subject  => 'pflogsumm',
+	    Date     => `date`,
+	    Type     => 'text/plain',
+	    Encoding => 'base64',
+	    Path     =>'/tmp/pflogg',
+	);
+
+	$msg->send;
+
+    Where "/tmp/pflogg" is the output of Pflogsumm.  This puts Pflogsumm's
+    output in a base64 MIME attachment.
+
+    In a follow-up to a thread in the postfix-users mailing list, Ralf
+    Hildebrandt noted:
+
+	"mpack does the same thing."
+
+    The canonical FTP site for mpack is ftp.andrew.cmu.edu:pub/mpack/
+
+    The solution I came up with is to modify the body_checks statements to
+    ignore the strings when they're in a Pflogsumm report, as follows:
+
+    Bounce anything with 6 or more "$"s in a row...
+
+	/\${6,}/    REJECT
+
+    Which, of course, catches the line in the Pflogsumm report too.
+    So...
+
+	/^(?!\s+[0-9]+\s+).*?\${6,}/    REJECT
+
+    which reads "anything with 6 or more '$'s in a row that is not a line
+    beginning with one or more whitespace characters, followed by one or
+    more digits, followed by one or more whitespace characters."
+
+    (This is using PCRE's, btw.)
+
+    Note that my solution will be more computationally expensive, by a
+    *long* way, than encoding Pflogsumm's output into a format that
+    body_checks won't catch.
+
+    Robert L Mathews suggested the following solution
+
+	/^ {6,11}[[:digit:]]{1,6}[ km] /    OK
+
+    Placed at the beginning of a body_checks file, this will "pre-approve"
+    lines in Pflogsumm's output that might otherwise get caught.  That's
+    a POSIX regexp version.  A PCRE version of the same thing would be:
+
+	/^ {6,11}\d{1,6}[ km] /    OK
+
+
+14. Pflogsumm Reports Double Traffic When Anti-Virus Scanner Used
+
+    Sadly, there's absolutely nothing I can do about this :-(.
+
+    The problem arises because of the way in which anti-virus scanning is
+    handled by Postfix.  Basically, Postfix "delivers" each email to the
+    anti-virus scanner and the anti-virus scanner re-sends it through
+    Postfix.  So each email really is received twice and sent/delivered
+    twice.
+
+    And yes, I tried.  I really, really tried.  If I recall correctly, I
+    spent come two days mucking-about with this problem.  Actually thought
+    I had it once or twice.  But the results inevitably failed regression
+    testing.  At the end of this, and with some more careful thought, I
+    realized it just wasn't possible.  If you think you can prove me
+    wrong, please do so.  I'd be quite pleased to be proven wrong on this
+    one.
+
+    johnfawcett at tiscali-dot-it believes he's done it.  You may find
+    prefiltering your log with his "prepflog" does it for you.  You can
+    find it at <http://web.tiscali.it/postfix/>.
+
+
+15. Pflogsumm's numbers don't add up
+
+    Pflogsumm reports more "delivered" than "received"
+
+	Naturally.  A single email message can have multiple recipients.
+
+    Pflogsumm reports more "rejected" than "received"
+
+    Why doesn't delivered + deferred + bounce + rejected = received?
+
+	Some rejects (header and body checks, for example) happen in
+	"cleanup," after alias lists are expanded.  Thus a single received
+	message will be rejected multiple times: once for each recipient.
+
+    The "size=" fields, multiplied by their "nrcpt=" fields, when added-up
+    yields a total higher than Pflogsumm's "bytes delivered" total.
+
+	Pflogsumm doesn't count something delivered until it actually *is*
+	delivered.  Nrcpt only suggests the number of intended recipients,
+	not how many are actually deliverable.  Only if there were no
+	bounces, rejects, defers or other undeliverables for everything
+	that was received would a calculation such as that above yield the
+	proper value.
+
+    Pflogsumm's "% rejected" doesn't add up
+
+	The "percent rejected" and "percent discarded" figures are only
+	approximations.  They are calculated as follows (example is for
+	"percent rejected"):
+
+	    percent rejected =
+
+		(rejected / (delivered + rejected + discarded)) * 100
+
+	Given the issues discussed above, this is really the best that can
+	be hoped-for, IMO.
+
+    I consistently see more "delivered" than "received."  How is that
+    possible?
+
+	Any message that's got multiple recipients in the "To:,"
+	"Cc:," and "Bcc:" fields will result in a single "received"
+	with multiple "delivered"s, as well as, possibly, multiple
+	"rejects" (or reject warnings, discards or holds), depending
+	on where in Postfix' processing the rule was that resulted
+	in the reject, etc.
+
+    See Also: 10. Pflogsumm misses/mis-diagnoses/mis-reports, etc.
+		  <whatever>
+
+
+16. Hourly stats for reports run without "-d" option are halved
+
+    Scenario: On day #1 of a fresh logfile, you run Pflogsumm with "-d
+    today" and the next day you run it with no "-d" option.  The "Per-Hour
+    Traffic" statistics are approximately halved.  How can this be?
+
+    Note that when you run Pflogsumm on a logfile that contains multi-day
+    logfile entries, Pflogsumm automatically changes the per-hour stats to
+    daily traffic averages.  If there's even *one* logfile entry from
+    another day, all of the per-hour stats will be divided by two.  Unless
+    you rotate logfiles *precisely* at midnight--and it's unlikely you can
+    guarantee that happening--there's no way to prevent this.
+
+
+17. How Do I Get Pflogsumm To Email Reports To Me Daily/Weekly/etc.?
+
+    Excuse me?  You're running a mailserver and you don't know how to use
+    cron to run things on a scheduled basis and pipe the output to
+    something that'll email it to you?
+
+    Oh. My. Lord.
+
+    *sigh*
+
+    Here's my crontab entries:
+
+    10 0 * * * /usr/local/sbin/pflogsumm -d yesterday /var/log/syslog \
+	2>&1 |/usr/bin/mailx -s "`uname -n` daily mail stats" postmaster
+
+    10 4 * * 0   /usr/local/sbin/pflogsumm /var/log/syslog.0 \
+	2>&1 |/usr/bin/mailx -s "`uname -n` weekly mail stats" postmaster
+
+    (Those are actually each a single line.  I line-broke them [and
+    signified that with the "\"s] for readability.)
+
+    The first generates stats for the previous day and is run *after*
+    midnight.  The second is run against the previous week's entire log.
+    (I rotate my logs weekly.)
+
+    If you rotate your logs on a different schedule, want monthly reports,
+    etc., I leave it as an exercise to you, the reader, to figure out how
+    to concatenate several logs to stdout and feed that to Pflogsumm.
+
+    See Also: 4. Built-In Support for Compressed Logs
+	      5. Processing Multiple Log Files
+	      The Unix manual pages for "cron," "crontab," "cat,"
+	      "zcat," "gzip," "gunzip," "mail," "mailx," etc.
+
+
+18. How Can I View Pflogsumm's Reports In My Web Browser?
+
+    Just direct Pflogsumm's output to a file, call it "something.txt" or
+    whatever, and look at it with your browser :).  If you want to get
+    fancy, create a post-processing shell script that'll create a
+    date-tagged file, like "mailstats-20030216.txt".  It's easy.
+
+    See Also: Pflogsumm Through A Browser, on Pflogsumm's home page.
+
+
+19. New Red Hat install - Pflogsumm no longer works!
+
+    From some email exchanges with a couple of people that reported
+    this...
+
+	"It appears the Pflogsumm is broken with RedHat9.  I can take
+	 the same log file and run it under Solaris9/RedHat 7.3 (perl 5.8
+	 on both) without a problem, but it breaks on RH9."
+
+	"Oops.  Sorry about the false alarm.  This is an issue with
+	 some of the other Perl scripts that are out there due to Red Hat
+	 8/9 using LANG=en_US.UTF-8
+
+	 Changing the locale to "POSIX" fixes this...
+	     LANG=C
+
+	 Note that Pflogsumm works fine when run through cron.daily, as
+	 cron has different environment settings."
+
+	"Ah, the good old RH8/9 UTF-8 strikes again.  I should have
+	 known. Setting  LANG to either en_US or C fixes the problem."
+
+    What the above means is that you have to change the "LANG" environment
+    variable from "en_US.UTF-8" to "en_US" or "C".  E.g.:
+
+	LANG="en_US"
+	export LANG
+
+    in your shell.  Or you could add these commands to your login
+    profile.  (I.e.: $HOME/.bash_profile, if you're using bash.)  Or set
+    the system-wide default in /etc/sysconfig/i18n.  My RH boxes have LANG
+    set to "en_US" there, and everything seems to work fine.  (If you set
+    it in your profile or the system-wide default, you'll need a fresh
+    login for it to take effect, obviously.)
+
+    See Also: 10. Pflogsumm misses/mis-diagnoses/mis-reports, etc.
+	       <whatever>
+              12. Pflogsumm just doesn't work or doesn't report anything
+	      21. Pflogsumm doesn't understand my log file format
+
+
+20. How can I best format my custom reject messages for display in
+    Pflogsumm's output?
+
+    Reject reason strings found in the mail log will be truncated at the
+    first comma (","), colon (":") or semi-colon (";").  If you want a
+    "clause" in your reject message to appear in Pflogsumm's output,
+    without having to specify --verbose_msg_detail, use a punctuation mark
+    other than one of those three, such as a dash ("-").
+
+
+21. Pflogsumm doesn't understand my log file format
+
+    I've received several requests to modify Pflogsumm's log file format
+    regular expression matching to accommodate "non-standard" log file
+    formats.  I'm not inclined to honour such requests.  The regexp that
+    identifies Postfix' log file entries is nearly incomprehensible as it
+    is.  If your log file format has extra fields (e.g.: FreeBSD syslogd
+    with "-v -v" specified), or, as in one case (metalog), is lacking
+    fields, and you insist on doing things that way, I recommend you
+    code-up a little pre-filter to mung the format into a standard one.
+
+    See Also: 10. Pflogsumm misses/mis-diagnoses/mis-reports, etc.
+	       <whatever>
+              12. Pflogsumm just doesn't work or doesn't report anything
+              19. New Red Hat install - Pflogsumm no longer works!
+
+
+22. Why Isn't There Any Mention Of "Monkey Butler" In The FAQ?
+
+    A friend of mine asked me if I'd put the phrase "monkey butler" in
+    the FAQ.  The answer is no.  Pflogsumm is used by some rather large
+    corporations.  There are credibility issues.  Sorry. :)
+
+
+23. Translating Pflogsumm (Support for Internationalization)
+
+    Unfortunately, Pflogsumm doesn't currently have i18n support.
+
+    It wasn't until at least Perl 5.6 that i18n was included as part of
+    the base distribution.  Since, last time I looked, 5.005* was still
+    the most widely-used version of Perl (that's what I'm still running
+    everywhere, too), I can't put i18n in without chancing breaking
+    things right-and-left for the majority of my customers.
+
+    Even with Perl 5.6 and above, it was mentioned in postfix-users, by
+    Liviu Daia, that
+
+	"Perl 5.6+ has locales.  Locales can give you localized
+	 dates, charsets, standard error messages etc., but it
+	 won't automatically switch languages of the strings
+	 defined in your program.  For that, you still need
+	 gettext or something equivalent."
+
+    So I'm not clear on the future of i18n support in Pflogsumm.  But I'm
+    keeping an eye on things.  Proper i18n support has long been one of
+    the top things on my own wish list!
+
+    Prospective translators are urged to translate *only* the
+    stable/production versions.  Beta and Alpha versions can sometimes
+    change rapidly.
+
+    If you do translate Pflogsumm, let me know and I'll put a link to it
+    on Pflogsumm's main web page.
+
+
+24. Pflogsumm may sometimes calculate "yesterday" incorrectly
+
+    As Wieland Chmielewski aptly noted:
+
+	Subroutine get_datestr incorrectly assumes that each day of
+	the year comprises 24 hours. In those countries which
+	participate in Daylight Saving Time policy there is one day
+	with 23 hours and one day with 25 hours. So, chances are (for
+	1 hour within those days) that get_datestr actually returns
+	either "the day before yesterday" or "today" instead of
+	"yesterday" as requested.
+
+    Right you are, Wieland, and thanks for the catch.
+
+    Problem is, of course, there's really no clean, easy, certain fix.
+    The work-around is to stay well clear of DST never-never land with
+    your cron jobs.
+
+
+25. Sending Logfile Samples
+
+    Here's the deal with whatever you may send me in the way of log
+    samples:
+
+	. Obfuscate them if you want.  But take care not alter them
+	  in such a manner that they're not accurate wrt the "realism" of
+	  the data, make sure the field formatting is not altered, and
+	  that the order of the log entries is not altered.
+
+	. The world is an unsafe place for your data, no matter where
+	  it might reside.  But I'll do my level best to ensure that your
+	  data does not fall into the hands of others.
+
+	. If you want, I'll PGP-encrypt the data when it's not in
+	  use.
+
+	. You can PGP-encrypt it when you send it to me if you're
+	  concerned.  My PGP public key can be found on my Web site and at
+	  the PGP public key servers.
+
+	. If you want, I'll delete the sample data when the work is
+	  done.  But I would *like* to keep it around for future
+	  regression-testing.  It's your call.  Let me know.
+
+
+26. From Where Can I  Obtain Pflogsumm?
+
+    http://jimsun.LinxNet.com/postfix_contrib.html
+
+
+Created: 15 Feb., 1999 / Last updated: 10 April, 2004
