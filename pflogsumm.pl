@@ -636,7 +636,7 @@ while(<>) {
 	--$msgMon;
     }
 
-    unless((($cmd, $qid) = $logRmdr =~ m#^(?:postfix|$syslogName)/([^\[:]*).*?: ([^:\s]+)#o) == 2 ||
+    unless((($cmd, $qid) = $logRmdr =~ m#^(?:postfix-?\w*|$syslogName)/([^\[:]*).*?: ([^:\s]+)#o) == 2 ||
            (($cmd, $qid) = $logRmdr =~ m#^((?:postfix)(?:-script)?)(?:\[\d+\])?: ([^:\s]+)#o) == 2)
     {
 	#print UNPROCD "$_";
