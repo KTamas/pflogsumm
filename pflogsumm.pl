@@ -1585,16 +1585,16 @@ sub adj_time_units {
 sub said_string_trimmer {
     my($trimmedString, $maxLen) = @_;
 
-#    while(length($trimmedString) > $maxLen) {
-#	if($trimmedString =~ /^.* said: /o) {
-#	    $trimmedString =~ s/^.* said: //o;
-#	} elsif($trimmedString =~ /^.*: */o) {
-#	    $trimmedString =~ s/^.*?: *//o;
-#	} else {
-#	    $trimmedString = substr($trimmedString, 0, $maxLen - 3) . "...";
-#	    last;
-#	}
-    #   }
+    while(length($trimmedString) > $maxLen) {
+	if($trimmedString =~ /^.* said: /o) {
+	    $trimmedString =~ s/^.* said: //o;
+	} elsif($trimmedString =~ /^.*: */o) {
+	    $trimmedString =~ s/^.*?: *//o;
+	} else {
+	    $trimmedString = substr($trimmedString, 0, $maxLen - 3) . "...";
+	    last;
+	}
+    }
 
     return $trimmedString;
 }
@@ -1603,8 +1603,8 @@ sub said_string_trimmer {
 sub string_trimmer {
     my($trimmedString, $maxLen, $doNotTrim) = @_;
 
-#    $trimmedString = substr($trimmedString, 0, $maxLen - 3) . "..." 
-#	if(! $doNotTrim && (length($trimmedString) > $maxLen));
+    $trimmedString = substr($trimmedString, 0, $maxLen - 3) . "..." 
+	if(! $doNotTrim && (length($trimmedString) > $maxLen));
     return $trimmedString;
 }
 
