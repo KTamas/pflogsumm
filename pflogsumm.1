@@ -124,7 +124,7 @@
 .\" ========================================================================
 .\"
 .IX Title "PFLOGSUMM 1"
-.TH PFLOGSUMM 1 "2010-03-20" "1.1.3" "User Contributed Perl Documentation"
+.TH PFLOGSUMM 1 "2012-02-05" "1.1.5" "User Contributed Perl Documentation"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -132,20 +132,18 @@
 .SH "NAME"
 pflogsumm.pl \- Produce Postfix MTA logfile summary
 .PP
-Copyright (C) 1998\-2010 by James S. Seymour, Release 1.1.3.
+Copyright (C) 1998\-2010 by James S. Seymour, Release 1.1.5
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
-.Vb 10
+.Vb 8
 \&    pflogsumm.pl \-[eq] [\-d <today|yesterday>] [\-\-detail <cnt>]
-\&        [\-\-bounce_detail <cnt>] [\-\-deferral_detail <cnt>]
-\&        [\-h <cnt>] [\-i|\-\-ignore_case] [\-\-iso_date_time] [\-\-mailq]
-\&        [\-m|\-\-uucp_mung] [\-\-no_bounce_detail] [\-\-no_deferral_detail]
-\&        [\-\-no_no_msg_size] [\-\-no_reject_detail] [\-\-no_smtpd_warnings]
-\&        [\-\-problems_first] [\-\-rej_add_from] [\-\-reject_detail <cnt>]
-\&        [\-\-smtp_detail <cnt>] [\-\-smtpd_stats]
-\&        [\-\-smtpd_warning_detail <cnt>] [\-\-syslog_name=string]
-\&        [\-u <cnt>] [\-\-verbose_msg_detail] [\-\-verp_mung[=<n>]]
-\&        [\-\-zero_fill] [file1 [filen]]
+\&        [\-\-bounce\-detail <cnt>] [\-\-deferral\-detail <cnt>]
+\&        [\-h <cnt>] [\-i|\-\-ignore\-case] [\-\-iso\-date\-time] [\-\-mailq]
+\&        [\-m|\-\-uucp\-mung] [\-\-no\-no\-msg\-size] [\-\-problems\-first]
+\&        [\-\-rej\-add\-from] [\-\-reject\-detail <cnt>] [\-\-smtp\-detail <cnt>]
+\&        [\-\-smtpd\-stats] [\-\-smtpd\-warning\-detail <cnt>]
+\&        [\-\-syslog\-name=string] [\-u <cnt>] [\-\-verbose\-msg\-detail]
+\&        [\-\-verp\-mung[=<n>]] [\-\-zero\-fill] [file1 [filen]]
 \&
 \&    pflogsumm.pl \-[help|version]
 \&
@@ -166,7 +164,7 @@ Copyright (C) 1998\-2010 by James S. Seymour, Release 1.1.3.
 .SH "OPTIONS"
 .IX Header "OPTIONS"
 .Vb 1
-\&    \-\-bounce_detail <cnt>
+\&    \-\-bounce\-detail <cnt>
 \&
 \&                   Limit detailed bounce reports to the top <cnt>.  0
 \&                   to suppress entirely.
@@ -174,14 +172,19 @@ Copyright (C) 1998\-2010 by James S. Seymour, Release 1.1.3.
 \&    \-d today       generate report for just today
 \&    \-d yesterday   generate report for just "yesterday"
 \&
-\&    \-\-deferral_detail <cnt>
+\&    \-\-time\-range <start> <end>
+\&
+\&                  Generate a report for the specified period.  Times in
+\&                  seconds since 1 Jan 1970.
+\&
+\&    \-\-deferral\-detail <cnt>
 \&
 \&                   Limit detailed deferral reports to the top <cnt>.  0
 \&                   to suppress entirely.
 \&
 \&    \-\-detail <cnt>
 \&    
-\&                   Sets all \-\-*_detail, \-h and \-u to <cnt>.  Is
+\&                   Sets all \-\-*\-detail, \-h and \-u to <cnt>.  Is
 \&                   over\-ridden by individual settings.  \-\-detail 0
 \&                   suppresses *all* detail.
 \&
@@ -199,7 +202,7 @@ Copyright (C) 1998\-2010 by James S. Seymour, Release 1.1.3.
 \&    
 \&                   0 = none.
 \&
-\&                   See also: "\-u" and "\-\-*_detail" options for further
+\&                   See also: "\-u" and "\-\-*\-detail" options for further
 \&                             report\-limiting options.
 \&
 \&    \-\-help         Emit short usage message and bail out.
@@ -209,7 +212,7 @@ Copyright (C) 1998\-2010 by James S. Seymour, Release 1.1.3.
 \&                   know: lame.)
 \&
 \&    \-i
-\&    \-\-ignore_case  Handle complete email address in a case\-insensitive
+\&    \-\-ignore\-case  Handle complete email address in a case\-insensitive
 \&                   manner.
 \&                   
 \&                   Normally pflogsumm lower\-cases only the host and
@@ -217,14 +220,14 @@ Copyright (C) 1998\-2010 by James S. Seymour, Release 1.1.3.
 \&                   option causes the entire email address to be lower\-
 \&                   cased.
 \&
-\&    \-\-iso_date_time
+\&    \-\-iso\-date\-time
 \&
 \&                   For summaries that contain date or time information,
 \&                   use ISO 8601 standard formats (CCYY\-MM\-DD and HH:MM),
 \&                   rather than "Mon DD CCYY" and "HHMM".
 \&
 \&    \-m             modify (mung?) UUCP\-style bang\-paths
-\&    \-\-uucp_mung
+\&    \-\-uucp\-mung
 \&
 \&                   This is for use when you have a mix of Internet\-style
 \&                   domain addresses and UUCP\-style bang\-paths in the log.
@@ -248,9 +251,9 @@ Copyright (C) 1998\-2010 by James S. Seymour, Release 1.1.3.
 \&    \-\-no_deferral_detail
 \&    \-\-no_reject_detail
 \&
-\&                   These switches are depreciated in favour of
-\&                   \-\-bounce_detail, \-\-deferral_detail and
-\&                   \-\-reject_detail, respectively.
+\&                   These switches are deprecated in favour of
+\&                   \-\-bounce\-detail, \-\-deferral\-detail and
+\&                   \-\-reject\-detail, respectively.
 \&
 \&                   Suppresses the printing of the following detailed
 \&                   reports, respectively:
@@ -262,7 +265,7 @@ Copyright (C) 1998\-2010 by James S. Seymour, Release 1.1.3.
 \&                   See also: "\-u" and "\-h" for further report\-limiting
 \&                             options.
 \&
-\&    \-\-no_no_msg_size
+\&    \-\-no\-no\-msg\-size
 \&
 \&                    Do not emit report on "Messages with no size data".
 \&
@@ -275,21 +278,21 @@ Copyright (C) 1998\-2010 by James S. Seymour, Release 1.1.3.
 \&                    normally reported by pflogsumm as "Messages with no
 \&                    size data."
 \&
-\&    \-\-no_smtpd_warnings
+\&    \-\-no\-smtpd\-warnings
 \&
-\&                   This switch is depreciated in favour of
-\&                   smtpd_warning_detail
+\&                   This switch is deprecated in favour of
+\&                   smtpd\-warning\-detail
 \&
 \&                    On a busy mail server, say at an ISP, SMTPD warnings
 \&                    can result in a rather sizeable report.  This option
 \&                    turns reporting them off.
 \&
-\&    \-\-problems_first
+\&    \-\-problems\-first
 \&
 \&                   Emit "problems" reports (bounces, defers, warnings,
 \&                   etc.) before "normal" stats.
 \&
-\&    \-\-rej_add_from
+\&    \-\-rej\-add\-from
 \&                   For those reject reports that list IP addresses or
 \&                   host/domain names: append the email from address to
 \&                   each listing.  (Does not apply to "Improper use of
@@ -300,17 +303,17 @@ Copyright (C) 1998\-2010 by James S. Seymour, Release 1.1.3.
 \&                   note: headings for warning, fatal, and "master"
 \&                   messages will always be printed.
 \&
-\&    \-\-reject_detail <cnt>
+\&    \-\-reject\-detail <cnt>
 \&
 \&                   Limit detailed smtpd reject, warn, hold and discard
 \&                   reports to the top <cnt>.  0 to suppress entirely.
 \&
-\&    \-\-smtp_detail <cnt>
+\&    \-\-smtp\-detail <cnt>
 \&
 \&                   Limit detailed smtp delivery reports to the top <cnt>.
 \&                   0 to suppress entirely.
 \&
-\&    \-\-smtpd_stats
+\&    \-\-smtpd\-stats
 \&
 \&                   Generate smtpd connection statistics.
 \&
@@ -318,14 +321,14 @@ Copyright (C) 1998\-2010 by James S. Seymour, Release 1.1.3.
 \&                   reports.  For multiple\-day reports: "per\-hour" numbers
 \&                   are daily averages (reflected in the report heading).
 \&
-\&    \-\-smtpd_warning_detail <cnt>
+\&    \-\-smtpd\-warning\-detail <cnt>
 \&
 \&                   Limit detailed smtpd warnings reports to the top <cnt>.
 \&                   0 to suppress entirely.
 \&
-\&    \-\-syslog_name=name
+\&    \-\-syslog\-name=name
 \&
-\&                   Set syslog_name to look for for Postfix log entries.
+\&                   Set syslog\-name to look for for Postfix log entries.
 \&
 \&                   By default, pflogsumm looks for entries in logfiles
 \&                   with a syslog name of "postfix," the default.
@@ -338,18 +341,18 @@ Copyright (C) 1998\-2010 by James S. Seymour, Release 1.1.3.
 \&
 \&    \-u <cnt>       top <cnt> to display in user reports. 0 == none.
 \&
-\&                   See also: "\-h" and "\-\-*_detail" options for further
+\&                   See also: "\-h" and "\-\-*\-detail" options for further
 \&                             report\-limiting options.
 \&
-\&    \-\-verbose_msg_detail
+\&    \-\-verbose\-msg\-detail
 \&
 \&                   For the message deferral, bounce and reject summaries:
 \&                   display the full "reason", rather than a truncated one.
 \&
 \&                   Note: this can result in quite long lines in the report.
 \&
-\&    \-\-verp_mung    do "VERP" generated address (?) munging.  Convert
-\&    \-\-verp_mung=2  sender addresses of the form
+\&    \-\-verp\-mung    do "VERP" generated address (?) munging.  Convert
+\&    \-\-verp\-mung=2  sender addresses of the form
 \&                   "list\-return\-NN\-someuser=some.dom@host.sender.dom"
 \&                    to
 \&                      "list\-return\-ID\-someuser=some.dom@host.sender.dom"
@@ -370,7 +373,7 @@ Copyright (C) 1998\-2010 by James S. Seymour, Release 1.1.3.
 \&
 \&    \-\-version      Print program name and version and bail out.
 \&
-\&    \-\-zero_fill    "Zero\-fill" certain arrays so reports come out with
+\&    \-\-zero\-fill    "Zero\-fill" certain arrays so reports come out with
 \&                   data in columns that that might otherwise be blank.
 .Ve
 .SH "RETURN VALUE"
@@ -469,9 +472,9 @@ Copyright (C) 1998\-2010 by James S. Seymour, Release 1.1.3.
 \&        
 \&            (rejected / (delivered + rejected + discarded)) * 100
 \&
-\&    There are some issues with the use of \-\-syslog_name.  The problem is
-\&    that, even with $syslog_name set, Postfix will sometimes still log
-\&    things with "postfix" as the syslog_name.  This is noted in
+\&    There are some issues with the use of \-\-syslog\-name.  The problem is
+\&    that, even with Postfix\*(Aq $syslog_name set, it will sometimes still
+\&    log things with "postfix" as the syslog_name.  This is noted in
 \&    /etc/postfix/sample\-misc.cf:
 \&
 \&        # Beware: a non\-default syslog_name setting takes effect only
@@ -501,7 +504,7 @@ Copyright (C) 1998\-2010 by James S. Seymour, Release 1.1.3.
 .SH "REQUIREMENTS"
 .IX Header "REQUIREMENTS"
 .Vb 3
-\&    For certain options (e.g.: \-\-smtpd_stats), Pflogsumm requires the
+\&    For certain options (e.g.: \-\-smtpd\-stats), Pflogsumm requires the
 \&    Date::Calc module, which can be obtained from CPAN at
 \&    http://www.perl.com.
 \&

@@ -16,8 +16,9 @@ Copyright (C) 1998-2010 by James S. Seymour, Release 1.1.5
 	[-m|--uucp-mung] [--no-no-msg-size] [--problems-first]
 	[--rej-add-from] [--reject-detail <cnt>] [--smtp-detail <cnt>]
 	[--smtpd-stats] [--smtpd-warning-detail <cnt>]
-	[--syslog-name=string] [-u <cnt>] [--verbose-msg-detail]
-	[--verp-mung[=<n>]] [--zero-fill] [file1 [filen]]
+	[--syslog-name=string] [--time-range <start> <end>] [-u <cnt>] 
+	[--verbose-msg-detail][--verp-mung[=<n>]] [--zero-fill] 
+	[file1 [filen]]
 
     pflogsumm.pl -[help|version]
 
@@ -43,6 +44,11 @@ Copyright (C) 1998-2010 by James S. Seymour, Release 1.1.5
 
     -d today       generate report for just today
     -d yesterday   generate report for just "yesterday"
+
+    --time-range <start> <end>
+
+		   Generate a report for the specified period.  Times in
+		   seconds since 1 Jan 1970.
 
     --deferral-detail <cnt>
 
@@ -449,7 +455,7 @@ $msgDlyMaxI = 4;	# max delay
 
 my (
     $cmd, $qid, $addr, $size, $relay, $status, $delay,
-    $dateStr, $dateStrRFC3339,
+    $dateStr, $dateStrRFC3339, @timeRange,
     %panics, %fatals, %warnings, %masterMsgs,
     %msgSizes,
     %deferred, %bounced,
@@ -512,6 +518,7 @@ $isoDateTime = 0;	# Don't use ISO date/time formats
 GetOptions(
     "bounce-detail=i"          => \$opts{'bounceDetail'},
     "d=s"                      => \$opts{'d'},
+    "time-range=i{2}"          => \@timeRange,
     "deferral-detail=i"        => \$opts{'deferralDetail'},
     "detail=i"                 => \$opts{'detail'},
     "e"                        => \$opts{'e'},
@@ -597,13 +604,15 @@ if($hasDateCalc) {
     # $^W = 0 doesn't work in this context.)
     *Delta_DHMS = *Date::Calc::Delta_DHMS;
     *Delta_DHMS = *Date::Calc::Delta_DHMS;
+    *Mktime = *Date::Calc::Mktime;
+    *Mktime = *Date::Calc::Mktime;
 
-} elsif(defined($opts{'smtpdStats'})) {
-    # If user specified --smtpd-stats but doesn't have Date::Calc
+} elsif(defined($opts{'smtpdStats'}) or defined($opts{'time-range'})) {
+    # If user specified --smtpd_stats but doesn't have Date::Calc
     # installed, die with friendly help message.
      die <<End_Of_HELP_DATE_CALC;
 
-The option "--smtpd-stats" does calculations that require the
+The options "--smtpd_stats" and "--time-range" do calculations that require the
 Date::Calc Perl module, but you don't have this module installed.
 If you want to use this extended functionality of Pflogsumm, you
 will have to install this module.  If you have root privileges
@@ -632,6 +641,7 @@ while(<>) {
     {
 	# Convert string to numeric value for later "month rollover" check
 	$msgMon = $monthNums{$msgMonStr};
+	$msgYr = guess_year($msgMon);
     } else {
 	# RFC 3339 timestamp format?
 	next unless((($msgYr, $msgMon, $msgDay, $msgHr, $msgMin, $msgSec, $logRmdr) =
@@ -639,6 +649,8 @@ while(<>) {
 	# RFC 3339 months start at "1", we index from 0
 	--$msgMon;
     }
+
+    next if (@timeRange and not in_timerange([$msgYr, $msgMon + 1, $msgDay, $msgHr, $msgMin, $msgSec], \@timeRange));
 
     unless((($cmd, $qid) = $logRmdr =~ m#^(?:postfix-?\w*|$syslogName)(?:/(?:smtps|submission))?/([^\[:]*).*?: ([^:\s]+)#o) == 2 ||
            (($cmd, $qid) = $logRmdr =~ m#^((?:postfix)(?:-script)?)(?:\[\d+\])?: ([^:\s]+)#o) == 2 ||
@@ -1529,6 +1541,27 @@ sub get_datestrs {
 
     return sprintf("%s %2d", $monthNames[$t_mon], $t_mday), sprintf("%04d-%02d-%02d", $t_year+1900, $t_mon+1, $t_mday);
 }
+
+# Verify that the timestamp falls in the specified time range
+# false if the timestamp falls outside it.
+sub in_timerange {
+    my ($start, $end) = @{$_[1]};
+    my $time = Mktime(@{$_[0]});
+    return (($start < $time) and ($time < $end));
+}
+
+# If the timestamp does not specify a year, make a reasonable
+# guess based on the current date.
+sub guess_year {
+    my $msgMon = $_[0];
+    my ($month, $year) = (localtime(time()))[4,5];
+    $year += 1900;
+    if ($msgMon == 11 and $month = 0) {
+	$year -= 1;
+    }
+    return $year;
+}
+
 
 # if there's a real domain: uses that.  Otherwise uses the IP addr.
 # Lower-cases returned domain name.
