@@ -465,7 +465,8 @@ my (
     %rcvdMsg, $msgsFwdd, $msgsBncd,
     $msgsDfrdCnt, $msgsDfrd, %msgDfrdFlgs,
     %connTime, %smtpdPerDay, %smtpdPerDom, $smtpdConnCnt, $smtpdTotTime,
-    %smtpMsgs
+    %smtpMsgs,
+    %requeue
 );
 $dayCnt = $smtpdConnCnt = $smtpdTotTime = 0;
 
@@ -640,7 +641,8 @@ while(<>) {
     }
 
     unless((($cmd, $qid) = $logRmdr =~ m#^(?:postfix-?\w*|$syslogName)(?:/(?:smtps|submission))?/([^\[:]*).*?: ([^:\s]+)#o) == 2 ||
-           (($cmd, $qid) = $logRmdr =~ m#^((?:postfix)(?:-script)?)(?:\[\d+\])?: ([^:\s]+)#o) == 2)
+           (($cmd, $qid) = $logRmdr =~ m#^((?:postfix)(?:-script)?)(?:\[\d+\])?: ([^:\s]+)#o) == 2 ||
+           (($cmd, $qid) = $logRmdr =~ m#^MailScanner\[\d+\]: (Requeue): (\w+)\.#) == 2) 
     {
 	#print UNPROCD "$_";
 	next;
@@ -663,6 +665,13 @@ while(<>) {
 	    ${$msgsPerDay{$revMsgDateStr}}[4] = 0;
 	}
     }
+
+    # detect MailScanner requeing, record into codebook
+    if ($cmd eq 'Requeue' and (my $n = $logRmdr =~ m~to (\w+)~) ) {
+        $requeue{$1}=$qid;
+    }    
+    # overload the qid if this is a MailScanner requeued msg
+    $qid = $requeue{$qid} if exists $requeue{$qid};
 
     # regexp rejects happen in "cleanup"
     if($cmd eq "cleanup" && (my($rejSubTyp, $rejReas, $rejRmdr) = $logRmdr =~
