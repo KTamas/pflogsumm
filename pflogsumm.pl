@@ -6,20 +6,18 @@ eval 'exec perl -S $0 "$@"'
 
 pflogsumm.pl - Produce Postfix MTA logfile summary
 
-Copyright (C) 1998-2010 by James S. Seymour, Release 1.1.3.
+Copyright (C) 1998-2010 by James S. Seymour, Release 1.1.5
 
 =head1 SYNOPSIS
 
     pflogsumm.pl -[eq] [-d <today|yesterday>] [--detail <cnt>]
-	[--bounce_detail <cnt>] [--deferral_detail <cnt>]
-	[-h <cnt>] [-i|--ignore_case] [--iso_date_time] [--mailq]
-	[-m|--uucp_mung] [--no_bounce_detail] [--no_deferral_detail]
-	[--no_no_msg_size] [--no_reject_detail] [--no_smtpd_warnings]
-	[--problems_first] [--rej_add_from] [--reject_detail <cnt>]
-	[--smtp_detail <cnt>] [--smtpd_stats]
-	[--smtpd_warning_detail <cnt>] [--syslog_name=string]
-	[-u <cnt>] [--verbose_msg_detail] [--verp_mung[=<n>]]
-	[--zero_fill] [file1 [filen]]
+	[--bounce-detail <cnt>] [--deferral-detail <cnt>]
+	[-h <cnt>] [-i|--ignore-case] [--iso-date-time] [--mailq]
+	[-m|--uucp-mung] [--no-no-msg-size] [--problems-first]
+	[--rej-add-from] [--reject-detail <cnt>] [--smtp-detail <cnt>]
+	[--smtpd-stats] [--smtpd-warning-detail <cnt>]
+	[--syslog-name=string] [-u <cnt>] [--verbose-msg-detail]
+	[--verp-mung[=<n>]] [--zero-fill] [file1 [filen]]
 
     pflogsumm.pl -[help|version]
 
@@ -38,7 +36,7 @@ Copyright (C) 1998-2010 by James S. Seymour, Release 1.1.3.
 
 =head1 OPTIONS
 
-    --bounce_detail <cnt>
+    --bounce-detail <cnt>
 
 		   Limit detailed bounce reports to the top <cnt>.  0
 		   to suppress entirely.
@@ -46,14 +44,14 @@ Copyright (C) 1998-2010 by James S. Seymour, Release 1.1.3.
     -d today       generate report for just today
     -d yesterday   generate report for just "yesterday"
 
-    --deferral_detail <cnt>
+    --deferral-detail <cnt>
 
 		   Limit detailed deferral reports to the top <cnt>.  0
 		   to suppress entirely.
 
     --detail <cnt>
     
-                   Sets all --*_detail, -h and -u to <cnt>.  Is
+                   Sets all --*-detail, -h and -u to <cnt>.  Is
 		   over-ridden by individual settings.  --detail 0
 		   suppresses *all* detail.
 
@@ -71,7 +69,7 @@ Copyright (C) 1998-2010 by James S. Seymour, Release 1.1.3.
     
 		   0 = none.
 
-                   See also: "-u" and "--*_detail" options for further
+                   See also: "-u" and "--*-detail" options for further
 			     report-limiting options.
 
     --help         Emit short usage message and bail out.
@@ -81,7 +79,7 @@ Copyright (C) 1998-2010 by James S. Seymour, Release 1.1.3.
 		   know: lame.)
 
     -i
-    --ignore_case  Handle complete email address in a case-insensitive
+    --ignore-case  Handle complete email address in a case-insensitive
                    manner.
 		   
 		   Normally pflogsumm lower-cases only the host and
@@ -89,14 +87,14 @@ Copyright (C) 1998-2010 by James S. Seymour, Release 1.1.3.
 		   option causes the entire email address to be lower-
 		   cased.
 
-    --iso_date_time
+    --iso-date-time
 
                    For summaries that contain date or time information,
 		   use ISO 8601 standard formats (CCYY-MM-DD and HH:MM),
 		   rather than "Mon DD CCYY" and "HHMM".
 
     -m             modify (mung?) UUCP-style bang-paths
-    --uucp_mung
+    --uucp-mung
 
                    This is for use when you have a mix of Internet-style
                    domain addresses and UUCP-style bang-paths in the log.
@@ -120,9 +118,9 @@ Copyright (C) 1998-2010 by James S. Seymour, Release 1.1.3.
     --no_deferral_detail
     --no_reject_detail
 
-		   These switches are depreciated in favour of
-		   --bounce_detail, --deferral_detail and
-		   --reject_detail, respectively.
+		   These switches are deprecated in favour of
+		   --bounce-detail, --deferral-detail and
+		   --reject-detail, respectively.
 
                    Suppresses the printing of the following detailed
                    reports, respectively:
@@ -134,7 +132,7 @@ Copyright (C) 1998-2010 by James S. Seymour, Release 1.1.3.
                    See also: "-u" and "-h" for further report-limiting
                              options.
 
-    --no_no_msg_size
+    --no-no-msg-size
 
 		    Do not emit report on "Messages with no size data".
 
@@ -147,21 +145,21 @@ Copyright (C) 1998-2010 by James S. Seymour, Release 1.1.3.
 		    normally reported by pflogsumm as "Messages with no
 		    size data."
 
-    --no_smtpd_warnings
+    --no-smtpd-warnings
 
-		   This switch is depreciated in favour of
-		   smtpd_warning_detail
+		   This switch is deprecated in favour of
+		   smtpd-warning-detail
 
 		    On a busy mail server, say at an ISP, SMTPD warnings
 		    can result in a rather sizeable report.  This option
 		    turns reporting them off.
 
-    --problems_first
+    --problems-first
 
                    Emit "problems" reports (bounces, defers, warnings,
 		   etc.) before "normal" stats.
 
-    --rej_add_from
+    --rej-add-from
                    For those reject reports that list IP addresses or
                    host/domain names: append the email from address to
                    each listing.  (Does not apply to "Improper use of
@@ -172,17 +170,17 @@ Copyright (C) 1998-2010 by James S. Seymour, Release 1.1.3.
 		   note: headings for warning, fatal, and "master"
 		   messages will always be printed.
 
-    --reject_detail <cnt>
+    --reject-detail <cnt>
 
 		   Limit detailed smtpd reject, warn, hold and discard
 		   reports to the top <cnt>.  0 to suppress entirely.
 
-    --smtp_detail <cnt>
+    --smtp-detail <cnt>
 
 		   Limit detailed smtp delivery reports to the top <cnt>.
 		   0 to suppress entirely.
 
-    --smtpd_stats
+    --smtpd-stats
 
                    Generate smtpd connection statistics.
 
@@ -190,14 +188,14 @@ Copyright (C) 1998-2010 by James S. Seymour, Release 1.1.3.
                    reports.  For multiple-day reports: "per-hour" numbers
                    are daily averages (reflected in the report heading).
 
-    --smtpd_warning_detail <cnt>
+    --smtpd-warning-detail <cnt>
 
 		   Limit detailed smtpd warnings reports to the top <cnt>.
 		   0 to suppress entirely.
 
-    --syslog_name=name
+    --syslog-name=name
 
-		   Set syslog_name to look for for Postfix log entries.
+		   Set syslog-name to look for for Postfix log entries.
 
 		   By default, pflogsumm looks for entries in logfiles
 		   with a syslog name of "postfix," the default.
@@ -210,18 +208,18 @@ Copyright (C) 1998-2010 by James S. Seymour, Release 1.1.3.
 
     -u <cnt>       top <cnt> to display in user reports. 0 == none.
 
-                   See also: "-h" and "--*_detail" options for further
+                   See also: "-h" and "--*-detail" options for further
 			     report-limiting options.
 
-    --verbose_msg_detail
+    --verbose-msg-detail
 
                    For the message deferral, bounce and reject summaries:
                    display the full "reason", rather than a truncated one.
 
                    Note: this can result in quite long lines in the report.
 
-    --verp_mung    do "VERP" generated address (?) munging.  Convert
-    --verp_mung=2  sender addresses of the form
+    --verp-mung    do "VERP" generated address (?) munging.  Convert
+    --verp-mung=2  sender addresses of the form
                    "list-return-NN-someuser=some.dom@host.sender.dom"
                     to
                       "list-return-ID-someuser=some.dom@host.sender.dom"
@@ -242,7 +240,7 @@ Copyright (C) 1998-2010 by James S. Seymour, Release 1.1.3.
 
     --version      Print program name and version and bail out.
 
-    --zero_fill    "Zero-fill" certain arrays so reports come out with
+    --zero-fill    "Zero-fill" certain arrays so reports come out with
                    data in columns that that might otherwise be blank.
 
 =head1 RETURN VALUE
@@ -336,9 +334,9 @@ Copyright (C) 1998-2010 by James S. Seymour, Release 1.1.3.
 	
 	    (rejected / (delivered + rejected + discarded)) * 100
 
-    There are some issues with the use of --syslog_name.  The problem is
-    that, even with $syslog_name set, Postfix will sometimes still log
-    things with "postfix" as the syslog_name.  This is noted in
+    There are some issues with the use of --syslog-name.  The problem is
+    that, even with Postfix' $syslog_name set, it will sometimes still
+    log things with "postfix" as the syslog_name.  This is noted in
     /etc/postfix/sample-misc.cf:
 
 	# Beware: a non-default syslog_name setting takes effect only
@@ -367,7 +365,7 @@ Copyright (C) 1998-2010 by James S. Seymour, Release 1.1.3.
 
 =head1 REQUIREMENTS
 
-    For certain options (e.g.: --smtpd_stats), Pflogsumm requires the
+    For certain options (e.g.: --smtpd-stats), Pflogsumm requires the
     Date::Calc module, which can be obtained from CPAN at
     http://www.perl.com.
 
@@ -404,7 +402,7 @@ eval { require Date::Calc };
 my $hasDateCalc = $@ ? 0 : 1;
 
 my $mailqCmd = "mailq";
-my $release = "1.1.3";
+my $release = "1.1.5";
 
 # Variables and constants used throughout pflogsumm
 use vars qw(
@@ -451,7 +449,7 @@ $msgDlyMaxI = 4;	# max delay
 
 my (
     $cmd, $qid, $addr, $size, $relay, $status, $delay,
-    $dateStr,
+    $dateStr, $dateStrRFC3339,
     %panics, %fatals, %warnings, %masterMsgs,
     %msgSizes,
     %deferred, %bounced,
@@ -488,55 +486,60 @@ for (0 .. 23) {
     $smtpdPerHr[$_]  = [0,0,0];
 }
 
-$progName = "pflogsumm.pl";
+($progName = $0) =~ s/^.*\///;
+
 $usageMsg =
     "usage: $progName -[eq] [-d <today|yesterday>] [--detail <cnt>]
-	[--bounce_detail <cnt>] [--deferral_detail <cnt>]
-	[-h <cnt>] [-i|--ignore_case] [--iso_date_time] [--mailq]
-	[-m|--uucp_mung] [--no_bounce_detail] [--no_deferral_detail]
-	[--no_no_msg_size] [--no_reject_detail] [--no_smtpd_warnings]
-	[--problems_first] [--rej_add_from] [--reject_detail <cnt>]
-	[--smtp_detail <cnt>] [--smtpd_stats]
-	[--smtpd_warning_detail <cnt>] [--syslog_name=string]
-	[-u <cnt>] [--verbose_msg_detail] [--verp_mung[=<n>]]
-	[--zero_fill] [file1 [filen]]
+	[--bounce-detail <cnt>] [--deferral-detail <cnt>]
+	[-h <cnt>] [-i|--ignore-case] [--iso-date-time] [--mailq]
+	[-m|--uucp-mung] [--no-no-msg-size] [--problems-first]
+	[--rej-add-from] [--reject-detail <cnt>] [--smtp-detail <cnt>]
+	[--smtpd-stats] [--smtpd-warning-detail <cnt>]
+	[--syslog-name=string] [-u <cnt>] [--verbose-msg-detail]
+	[--verp-mung[=<n>]] [--zero-fill] [file1 [filen]]
 
        $progName --[version|help]";
+
+# Accept either "_"s or "-"s in --switches
+foreach (@ARGV) {
+    last if($_ eq "--");
+    tr/_/-/ if(/^--\w/);
+}
 
 # Some pre-inits for convenience
 $isoDateTime = 0;	# Don't use ISO date/time formats
 GetOptions(
-    "bounce_detail=i"          => \$opts{'bounceDetail'},
+    "bounce-detail=i"          => \$opts{'bounceDetail'},
     "d=s"                      => \$opts{'d'},
-    "deferral_detail=i"        => \$opts{'deferralDetail'},
+    "deferral-detail=i"        => \$opts{'deferralDetail'},
     "detail=i"                 => \$opts{'detail'},
     "e"                        => \$opts{'e'},
     "help"                     => \$opts{'help'},
     "h=i"                      => \$opts{'h'},
-    "ignore_case"              => \$opts{'i'},
+    "ignore-case"              => \$opts{'i'},
     "i"                        => \$opts{'i'},
-    "iso_date_time"            => \$isoDateTime,
+    "iso-date-time"            => \$isoDateTime,
     "mailq"                    => \$opts{'mailq'},
     "m"                        => \$opts{'m'},
-    "no_bounce_detail"         => \$opts{'noBounceDetail'},
-    "no_deferral_detail"       => \$opts{'noDeferralDetail'},
-    "no_no_msg_size"           => \$opts{'noNoMsgSize'},
-    "no_reject_detail"         => \$opts{'noRejectDetail'},
-    "no_smtpd_warnings"        => \$opts{'noSMTPDWarnings'},
-    "problems_first"           => \$opts{'pf'},
+    "no-bounce-detail"         => \$opts{'noBounceDetail'},
+    "no-deferral-detail"       => \$opts{'noDeferralDetail'},
+    "no-no-msg-size"           => \$opts{'noNoMsgSize'},
+    "no-reject-detail"         => \$opts{'noRejectDetail'},
+    "no-smtpd-warnings"        => \$opts{'noSMTPDWarnings'},
+    "problems-first"           => \$opts{'pf'},
     "q"                        => \$opts{'q'},
-    "rej_add_from"             => \$opts{'rejAddFrom'},
-    "reject_detail=i"          => \$opts{'rejectDetail'},
-    "smtp_detail=i"            => \$opts{'smtpDetail'},
-    "smtpd_stats"              => \$opts{'smtpdStats'},
-    "smtpd_warning_detail=i"   => \$opts{'smtpdWarnDetail'},
-    "syslog_name=s"            => \$opts{'syslogName'},
+    "rej-add-from"             => \$opts{'rejAddFrom'},
+    "reject-detail=i"          => \$opts{'rejectDetail'},
+    "smtp-detail=i"            => \$opts{'smtpDetail'},
+    "smtpd-stats"              => \$opts{'smtpdStats'},
+    "smtpd-warning-detail=i"   => \$opts{'smtpdWarnDetail'},
+    "syslog-name=s"            => \$opts{'syslogName'},
     "u=i"                      => \$opts{'u'},
-    "uucp_mung"                => \$opts{'m'},
-    "verbose_msg_detail"       => \$opts{'verbMsgDetail'},
-    "verp_mung:i"              => \$opts{'verpMung'},
+    "uucp-mung"                => \$opts{'m'},
+    "verbose-msg-detail"       => \$opts{'verbMsgDetail'},
+    "verp-mung:i"              => \$opts{'verpMung'},
     "version"                  => \$opts{'version'},
-    "zero_fill"                => \$opts{'zeroFill'}
+    "zero-fill"                => \$opts{'zeroFill'}
 ) || die "$usageMsg\n";
 
 # internally: 0 == none, undefined == -1 == all
@@ -551,19 +554,19 @@ $opts{'rejectDetail'} = -1 unless(defined($opts{'rejectDetail'}));
 # These go away eventually
 if(defined($opts{'noBounceDetail'})) {
     $opts{'bounceDetail'} = 0;
-    warn "$progName: \"no_bounce_detail\" is depreciated, use \"bounce_detail=0\" instead\n"
+    warn "$progName: \"no_bounce_detail\" is deprecated, use \"bounce-detail=0\" instead\n"
 }
 if(defined($opts{'noDeferralDetail'})) {
     $opts{'deferralDetail'} = 0;
-    warn "$progName: \"no_deferral_detail\" is depreciated, use \"deferral_detail=0\" instead\n"
+    warn "$progName: \"no_deferral_detail\" is deprecated, use \"deferral-detail=0\" instead\n"
 }
 if(defined($opts{'noRejectDetail'})) {
     $opts{'rejectDetail'} = 0;
-    warn "$progName: \"no_reject_detail\" is depreciated, use \"reject_detail=0\" instead\n"
+    warn "$progName: \"no_reject_detail\" is deprecated, use \"reject-detail=0\" instead\n"
 }
 if(defined($opts{'noSMTPDWarnings'})) {
     $opts{'smtpdWarnDetail'} = 0;
-    warn "$progName: \"no_smtpd_warnings\" is depreciated, use \"smtpd_warning_detail=0\" instead\n"
+    warn "$progName: \"no_smtpd_warnings\" is deprecated, use \"smtpd-warning-detail=0\" instead\n"
 }
 
 # If --detail was specified, set anything that's not enumerated to it
@@ -595,11 +598,11 @@ if($hasDateCalc) {
     *Delta_DHMS = *Date::Calc::Delta_DHMS;
 
 } elsif(defined($opts{'smtpdStats'})) {
-    # If user specified --smtpd_stats but doesn't have Date::Calc
+    # If user specified --smtpd-stats but doesn't have Date::Calc
     # installed, die with friendly help message.
      die <<End_Of_HELP_DATE_CALC;
 
-The option "--smtpd_stats" does calculations that require the
+The option "--smtpd-stats" does calculations that require the
 Date::Calc Perl module, but you don't have this module installed.
 If you want to use this extended functionality of Pflogsumm, you
 will have to install this module.  If you have root privileges
@@ -611,32 +614,32 @@ command:
 End_Of_HELP_DATE_CALC
 }
 
-$dateStr = get_datestr($opts{'d'}) if(defined($opts{'d'}));
+($dateStr, $dateStrRFC3339) = get_datestrs($opts{'d'}) if(defined($opts{'d'}));
 
 # debugging
 #open(UNPROCD, "> unprocessed") ||
 #    die "couldn't open \"unprocessed\": $!\n";
 
 while(<>) {
-    next if(defined($dateStr) && ! /^$dateStr/o);
-    s/: \[ID \d+ [^\]]+\] /: /o;	# lose "[ID nnnnnn some.thing]" stuff
+    next if(defined($dateStr) && ! (/^${dateStr} / || /^${dateStrRFC3339}T/));
+    s/: \[ID \d+ [^\]]+\] /: /;	# lose "[ID nnnnnn some.thing]" stuff
     my $logRmdr;
 
     # "Traditional" timestamp format?
     if((($msgMonStr, $msgDay, $msgHr, $msgMin, $msgSec, $logRmdr) =
-	/^(...) {1,2}(\d{1,2}) (\d{2}):(\d{2}):(\d{2}) \S+ (.+)$/o) == 6)
+	/^(...) {1,2}(\d{1,2}) (\d{2}):(\d{2}):(\d{2}) \S+ (.+)$/) == 6)
     {
 	# Convert string to numeric value for later "month rollover" check
 	$msgMon = $monthNums{$msgMonStr};
     } else {
 	# RFC 3339 timestamp format?
 	next unless((($msgYr, $msgMon, $msgDay, $msgHr, $msgMin, $msgSec, $logRmdr) =
-	    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:[\+\-](?:\d{2}):(?:\d{2})|Z) \S+ (.+)$/o) == 10);
+	    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d+)?(?:[\+\-](?:\d{2}):(?:\d{2})|Z) \S+ (.+)$/) == 7);
 	# RFC 3339 months start at "1", we index from 0
 	--$msgMon;
     }
 
-    unless((($cmd, $qid) = $logRmdr =~ m#^(?:postfix-?\w*|$syslogName)/([^\[:]*).*?: ([^:\s]+)#o) == 2 ||
+    unless((($cmd, $qid) = $logRmdr =~ m#^(?:postfix-?\w*|$syslogName)(?:/(?:smtps|submission))?/([^\[:]*).*?: ([^:\s]+)#o) == 2 ||
            (($cmd, $qid) = $logRmdr =~ m#^((?:postfix)(?:-script)?)(?:\[\d+\])?: ([^:\s]+)#o) == 2)
     {
 	#print UNPROCD "$_";
@@ -663,9 +666,9 @@ while(<>) {
 
     # regexp rejects happen in "cleanup"
     if($cmd eq "cleanup" && (my($rejSubTyp, $rejReas, $rejRmdr) = $logRmdr =~
-	/\/cleanup\[\d+\]: .*?\b(reject|warning|hold|discard): (header|body) (.*)$/o) == 3)
+	/\/cleanup\[\d+\]: .*?\b(reject|warning|hold|discard): (header|body) (.*)$/) == 3)
     {
-	$rejRmdr =~ s/( from \S+?)?; from=<.*$//o unless($opts{'verbMsgDetail'});
+	$rejRmdr =~ s/( from \S+?)?; from=<.*$// unless($opts{'verbMsgDetail'});
 	$rejRmdr = string_trimmer($rejRmdr, 64, $opts{'verbMsgDetail'});
 	if($rejSubTyp eq "reject") {
 	    ++$rejects{$cmd}{$rejReas}{$rejRmdr} unless($opts{'rejectDetail'} == 0);
@@ -683,17 +686,17 @@ while(<>) {
 	++$rejPerHr[$msgHr];
 	++${$msgsPerDay{$revMsgDateStr}}[4];
     } elsif($qid eq 'warning') {
-	(my $warnReas = $logRmdr) =~ s/^.*warning: //o;
+	(my $warnReas = $logRmdr) =~ s/^.*warning: //;
 	$warnReas = string_trimmer($warnReas, 66, $opts{'verbMsgDetail'});
 	unless($cmd eq "smtpd" && $opts{'noSMTPDWarnings'}) {
 	    ++$warnings{$cmd}{$warnReas};
 	}
     } elsif($qid eq 'fatal') {
-	(my $fatalReas = $logRmdr) =~ s/^.*fatal: //o;
+	(my $fatalReas = $logRmdr) =~ s/^.*fatal: //;
 	$fatalReas = string_trimmer($fatalReas, 66, $opts{'verbMsgDetail'});
 	++$fatals{$cmd}{$fatalReas};
     } elsif($qid eq 'panic') {
-	(my $panicReas = $logRmdr) =~ s/^.*panic: //o;
+	(my $panicReas = $logRmdr) =~ s/^.*panic: //;
 	$panicReas = string_trimmer($panicReas, 66, $opts{'verbMsgDetail'});
 	++$panics{$cmd}{$panicReas};
     } elsif($qid eq 'reject') {
@@ -711,7 +714,7 @@ while(<>) {
     } elsif($cmd eq 'master') {
 	++$masterMsgs{(split(/^.*master.*: /, $logRmdr))[1]};
     } elsif($cmd eq 'smtpd') {
-	if($logRmdr =~ /\[\d+\]: \w+: client=(.+?)(,|$)/o) {
+	if($logRmdr =~ /\[\d+\]: \w+: client=(.+?)(,|$)/) {
 	    #
 	    # Warning: this code in two places!
 	    #
@@ -719,7 +722,9 @@ while(<>) {
 	    ++${$msgsPerDay{$revMsgDateStr}}[0];
 	    ++$msgsRcvd;
 	    $rcvdMsg{$qid} = gimme_domain($1);	# Whence it came
-	} elsif(my($rejSubTyp) = $logRmdr =~ /\[\d+\]: \w+: (reject(?:_warning)?|hold|discard): /o) {
+	    # DEBUG DEBUG DEBUG
+	    #print STDERR "Received: $qid\n";
+	} elsif(my($rejSubTyp) = $logRmdr =~ /\[\d+\]: \w+: (reject(?:_warning)?|hold|discard): /) {
 	    if($rejSubTyp eq 'reject') {
 		proc_smtpd_reject($logRmdr, \%rejects, \$msgsRjctd,
 				  \$rejPerHr[$msgHr],
@@ -740,12 +745,12 @@ while(<>) {
 	}
 	else {
 	    next unless(defined($opts{'smtpdStats'}));
-	    if($logRmdr =~ /: connect from /o) {
-		$logRmdr =~ /\/smtpd\[(\d+)\]: /o;
+	    if($logRmdr =~ /: connect from /) {
+		$logRmdr =~ /\/smtpd\[(\d+)\]: /;
 		@{$connTime{$1}} =
 		    ($msgYr, $msgMon + 1, $msgDay, $msgHr, $msgMin, $msgSec);
-	    } elsif($logRmdr =~ /: disconnect from /o) {
-		my ($pid, $hostID) = $logRmdr =~ /\/smtpd\[(\d+)\]: disconnect from (.+)$/o;
+	    } elsif($logRmdr =~ /: disconnect from /) {
+		my ($pid, $hostID) = $logRmdr =~ /\/smtpd\[(\d+)\]: disconnect from (.+)$/;
 		if(exists($connTime{$pid})) {
 		    $hostID = gimme_domain($hostID);
 		    my($d, $h, $m, $s) = Delta_DHMS(@{$connTime{$pid}},
@@ -780,14 +785,14 @@ while(<>) {
 	}
     } else {
 	my $toRmdr;
-	if((($addr, $size) = $logRmdr =~ /from=<([^>]*)>, size=(\d+)/o) == 2)
+	if((($addr, $size) = $logRmdr =~ /from=<([^>]*)>, size=(\d+)/) == 2)
 	{
 	    next if($msgSizes{$qid});	# avoid double-counting!
 	    if($addr) {
-		if($opts{'m'} && $addr =~ /^(.*!)*([^!]+)!([^!@]+)@([^\.]+)$/o) {
+		if($opts{'m'} && $addr =~ /^(.*!)*([^!]+)!([^!@]+)@([^\.]+)$/) {
 		    $addr = "$4!" . ($1? "$1" : "") . $3 . "\@$2";
 		}
-		$addr =~ s/(@.+)/\L$1/o unless($opts{'i'});
+		$addr =~ s/(@.+)/\L$1/ unless($opts{'i'});
 		$addr = lc($addr) if($opts{'i'});
 		$addr = verp_mung($addr);
 	    } else {
@@ -800,7 +805,7 @@ while(<>) {
 		# Get the domain out of the sender's address.  If there is
 		# none: Use the client hostname/IP-address
 		my $domAddr;
-		unless((($domAddr = $addr) =~ s/^[^@]+\@(.+)$/$1/o) == 1) {
+		unless((($domAddr = $addr) =~ s/^[^@]+\@(.+)$/$1/) == 1) {
 		    $domAddr = $rcvdMsg{$qid} eq "pickup"? $addr : $rcvdMsg{$qid};
 		}
 		++$sendgDomCnt
@@ -815,20 +820,20 @@ while(<>) {
 	    }
 	}
 	elsif((($addr, $relay, $delay, $status, $toRmdr) = $logRmdr =~
-		/to=<([^>]*)>, (?:orig_to=<[^>]*>, )?relay=([^,]+), (?:conn_use=[^,]+, )?delay=([^,]+), (?:delays=[^,]+, )?(?:dsn=[^,]+, )?status=(\S+)(.*)$/o) >= 4)
+		/to=<([^>]*)>, (?:orig_to=<[^>]*>, )?relay=([^,]+), (?:conn_use=[^,]+, )?delay=([^,]+), (?:delays=[^,]+, )?(?:dsn=[^,]+, )?status=(\S+)(.*)$/) >= 4)
 	{
 
-	    if($opts{'m'} && $addr =~ /^(.*!)*([^!]+)!([^!@]+)@([^\.]+)$/o) {
+	    if($opts{'m'} && $addr =~ /^(.*!)*([^!]+)!([^!@]+)@([^\.]+)$/) {
 		$addr = "$4!" . ($1? "$1" : "") . $3 . "\@$2";
 	    }
-	    $addr =~ s/(@.+)/\L$1/o unless($opts{'i'});
+	    $addr =~ s/(@.+)/\L$1/ unless($opts{'i'});
 	    $addr = lc($addr) if($opts{'i'});
 	    $relay = lc($relay) if($opts{'i'});
-	    (my $domAddr = $addr) =~ s/^[^@]+\@//o;	# get domain only
+	    (my $domAddr = $addr) =~ s/^[^@]+\@//;	# get domain only
 	    if($status eq 'sent') {
 
 		# was it actually forwarded, rather than delivered?
-		if($toRmdr =~ /forwarded as /o) {
+		if($toRmdr =~ /forwarded as /) {
 		    ++$msgsFwdd;
 		    next;
 		}
@@ -845,6 +850,8 @@ while(<>) {
 		++$dlvPerHr[$msgHr];
 		++${$msgsPerDay{$revMsgDateStr}}[1];
 		++$msgsDlvrd;
+		# DEBUG DEBUG DEBUG
+		#print STDERR "Delivered: $qid\n";
 		if($msgSizes{$qid}) {
 		    ${$recipDom{$domAddr}}[$msgSizeI] += $msgSizes{$qid};
 		    ${$recipUser{$addr}}[$msgSizeI] += $msgSizes{$qid};
@@ -860,11 +867,11 @@ while(<>) {
 		push(@{$msgDetail{$qid}}, $addr) if($opts{'e'});
 	    } elsif($status eq 'deferred') {
 		unless($opts{'deferralDetail'} == 0) {
-		    my ($deferredReas) = $logRmdr =~ /, status=deferred \(([^\)]+)/o;
+		    my ($deferredReas) = $logRmdr =~ /, status=deferred \(([^\)]+)/;
 		    unless(defined($opts{'verbMsgDetail'})) {
 			$deferredReas = said_string_trimmer($deferredReas, 65);
-			$deferredReas =~ s/^\d{3} //o;
-			$deferredReas =~ s/^connect to //o;
+			$deferredReas =~ s/^\d{3} //;
+			$deferredReas =~ s/^connect to //;
 		    }
 		    ++$deferred{$cmd}{$deferredReas};
 		}
@@ -880,10 +887,10 @@ while(<>) {
 		}
 	    } elsif($status eq 'bounced') {
 		unless($opts{'bounceDetail'} == 0) {
-		    my ($bounceReas) = $logRmdr =~ /, status=bounced \((.+)\)/o;
+		    my ($bounceReas) = $logRmdr =~ /, status=bounced \((.+)\)/;
 		    unless(defined($opts{'verbMsgDetail'})) {
 			$bounceReas = said_string_trimmer($bounceReas, 66);
-			$bounceReas =~ s/^\d{3} //o;
+			$bounceReas =~ s/^\d{3} //;
 		    }
 		    ++$bounced{$relay}{$bounceReas};
 		}
@@ -894,7 +901,7 @@ while(<>) {
 #		print UNPROCD "$_\n";
 	    }
 	}
-	elsif($cmd eq 'pickup' && $logRmdr =~ /: (sender|uid)=/o) {
+	elsif($cmd eq 'pickup' && $logRmdr =~ /: (sender|uid)=/) {
 	    #
 	    # Warning: this code in two places!
 	    #
@@ -905,9 +912,9 @@ while(<>) {
 	}
 	elsif($cmd eq 'smtp' && $opts{'smtpDetail'} != 0) {
 	    # Was an IPv6 problem here
-	    if($logRmdr =~ /.* connect to (\S+?): ([^;]+); address \S+ port.*$/o) {
+	    if($logRmdr =~ /.* connect to (\S+?): ([^;]+); address \S+ port.*$/) {
 		++$smtpMsgs{lc($2)}{$1};
-	    } elsif($logRmdr =~ /.* connect to ([^[]+)\[\S+?\]: (.+?) \(port \d+\)$/o) {
+	    } elsif($logRmdr =~ /.* connect to ([^[]+)\[\S+?\]: (.+?) \(port \d+\)$/) {
 		++$smtpMsgs{lc($2)}{$1};
 	    } else {
 #		print UNPROCD "$_\n";
@@ -1419,9 +1426,9 @@ sub normalize_host {
     # For IP addrs and hostnames: lop off possible " (user@dom.ain)" bit
     my $norm1 = (split(/\s/, $_[0]))[0];
 
-    if((my @octets = ($norm1 =~ /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/o)) == 4) {
+    if((my @octets = ($norm1 =~ /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/)) == 4) {
 	# Dotted-quad IP address
-	return(pack('C4', @octets));
+	return(pack('U4', @octets));
     } else {
 	# Possibly hostname or user@dom.ain
 	return(join( '', map { lc $_ } reverse split /[.@]/, $norm1 ));
@@ -1446,9 +1453,9 @@ sub by_domain_then_user {
 
     # now re-order "mach.host.dom"/"mach.host.do.co" to
     # "host.dom.mach"/"host.do.co.mach"
-    $domainA =~ s/^(.*)\.([^\.]+)\.([^\.]{3}|[^\.]{2,3}\.[^\.]{2})$/$2.$3.$1/o
+    $domainA =~ s/^(.*)\.([^\.]+)\.([^\.]{3}|[^\.]{2,3}\.[^\.]{2})$/$2.$3.$1/
 	if($domainA);
-    $domainB =~ s/^(.*)\.([^\.]+)\.([^\.]{3}|[^\.]{2,3}\.[^\.]{2})$/$2.$3.$1/o
+    $domainB =~ s/^(.*)\.([^\.]+)\.([^\.]{3}|[^\.]{2,3}\.[^\.]{2})$/$2.$3.$1/
 	if($domainB);
 
     # oddly enough, doing this here is marginally faster than doing
@@ -1462,8 +1469,8 @@ sub by_domain_then_user {
 	return 1;
     } else {
 	# disregard leading bang-path
-	$userNameA =~ s/^.*!//o;
-	$userNameB =~ s/^.*!//o;
+	$userNameA =~ s/^.*!//;
+	$userNameB =~ s/^.*!//;
 	if($userNameA lt $userNameB) {
 	    return -1;
 	} elsif($userNameA gt $userNameB) {
@@ -1497,9 +1504,9 @@ sub by_count_then_size {
     }
 }
 
-# return a date string to match in log
-sub get_datestr {
-    my $dateOpt = $_[0];
+# return traditional and RFC3339 date strings to match in log
+sub get_datestrs {
+    my ($dateOpt) = $_[0];
 
     my $time = time();
 
@@ -1509,9 +1516,9 @@ sub get_datestr {
     } elsif($dateOpt ne "today") {
 	die "$usageMsg\n";
     }
-    my ($t_mday, $t_mon) = (localtime($time))[3,4];
+    my ($t_mday, $t_mon, $t_year) = (localtime($time))[3,4,5];
 
-    return sprintf("%s %2d", $monthNames[$t_mon], $t_mday);
+    return sprintf("%s %2d", $monthNames[$t_mon], $t_mday), sprintf("%04d-%02d-%02d", $t_year+1900, $t_mon+1, $t_mday);
 }
 
 # if there's a real domain: uses that.  Otherwise uses the IP addr.
@@ -1529,10 +1536,10 @@ sub gimme_domain {
     # split domain/ipaddr into separates
     # newer versions of Postfix have them "dom.ain[i.p.add.ress]"
     # older versions of Postfix have them "dom.ain/i.p.add.ress"
-    unless((($domain, $ipAddr) = /^([^\[]+)\[((?:\d{1,3}\.){3}\d{1,3})\]/o) == 2 ||
-           (($domain, $ipAddr) = /^([^\/]+)\/([0-9a-f.:]+)/oi) == 2) {
+    unless((($domain, $ipAddr) = /^([^\[]+)\[((?:\d{1,3}\.){3}\d{1,3})\]/) == 2 ||
+           (($domain, $ipAddr) = /^([^\/]+)\/([0-9a-f.:]+)/i) == 2) {
 	# more exhaustive method
-        ($domain, $ipAddr) = /^([^\[\(\/]+)[\[\(\/]([^\]\)]+)[\]\)]?:?\s*$/o;
+        ($domain, $ipAddr) = /^([^\[\(\/]+)[\[\(\/]([^\]\)]+)[\]\)]?:?\s*$/;
     }
  
     # "mach.host.dom"/"mach.host.do.co" to "host.dom"/"host.do.co"
@@ -1540,10 +1547,10 @@ sub gimme_domain {
         $domain = $ipAddr;
 	# For identifying the host part on a Class C network (commonly
 	# seen with dial-ups) the following is handy.
-        # $domain =~ s/\.\d+$//o;
+        # $domain =~ s/\.\d+$//;
     } else {
         $domain =~
-            s/^(.*)\.([^\.]+)\.([^\.]{3}|[^\.]{2,3}\.[^\.]{2})$/\L$2.$3/o;
+            s/^(.*)\.([^\.]+)\.([^\.]{3}|[^\.]{2,3}\.[^\.]{2})$/\L$2.$3/;
     }
  
     return $domain;
@@ -1586,10 +1593,10 @@ sub said_string_trimmer {
     my($trimmedString, $maxLen) = @_;
 
     while(length($trimmedString) > $maxLen) {
-	if($trimmedString =~ /^.* said: /o) {
-	    $trimmedString =~ s/^.* said: //o;
-	} elsif($trimmedString =~ /^.*: */o) {
-	    $trimmedString =~ s/^.*?: *//o;
+	if($trimmedString =~ /^.* said: /) {
+	    $trimmedString =~ s/^.* said: //;
+	} elsif($trimmedString =~ /^.*: */) {
+	    $trimmedString =~ s/^.*?: *//;
 	} else {
 	    $trimmedString = substr($trimmedString, 0, $maxLen - 3) . "...";
 	    last;
@@ -1638,7 +1645,7 @@ sub proc_smtpd_reject {
     # First: get everything following the "reject: ", etc. token
     # Was an IPv6 problem here
     ($rejTyp, $rejFrom, $rejRmdr) = 
-	($logLine =~ /^.* \b(?:reject(?:_warning)?|hold|discard): (\S+) from (\S+?): (.*)$/o);
+	($logLine =~ /^.* \b(?:reject(?:_warning)?|hold|discard): (\S+) from (\S+?): (.*)$/);
 
     # Next: get the reject "reason"
     $rejReas = $rejRmdr;
@@ -1648,14 +1655,14 @@ sub proc_smtpd_reject {
 	    # an email address or HELO string.  There can be *anything* in
 	    # those--incl. stuff that'll screw up subsequent parsing.  So just
 	    # get rid of it right off.
-	    $rejReas =~ s/^(\d{3} <).*?(>:)/$1$2/o;
-	    $rejReas =~ s/^(?:.*?[:;] )(?:\[[^\]]+\] )?([^;,]+)[;,].*$/$1/o;
-	    $rejReas =~ s/^((?:Sender|Recipient) address rejected: [^:]+):.*$/$1/o;
-	    $rejReas =~ s/(Client host|Sender address) .+? blocked/blocked/o;
+	    $rejReas =~ s/^(\d{3} <).*?(>:)/$1$2/;
+	    $rejReas =~ s/^(?:.*?[:;] )(?:\[[^\]]+\] )?([^;,]+)[;,].*$/$1/;
+	    $rejReas =~ s/^((?:Sender|Recipient) address rejected: [^:]+):.*$/$1/;
+	    $rejReas =~ s/(Client host|Sender address) .+? blocked/blocked/;
 	} elsif($rejTyp eq "MAIL") {	# *more* special treatment :-( grrrr...
-	    $rejReas =~ s/^\d{3} (?:<.+>: )?([^;:]+)[;:]?.*$/$1/o;
+	    $rejReas =~ s/^\d{3} (?:<.+>: )?([^;:]+)[;:]?.*$/$1/;
 	} else {
-	    $rejReas =~ s/^(?:.*[:;] )?([^,]+).*$/$1/o;
+	    $rejReas =~ s/^(?:.*[:;] )?([^,]+).*$/$1/;
 	}
     }
 
@@ -1663,14 +1670,14 @@ sub proc_smtpd_reject {
     # Second expression is for unknown recipient--where there is no
     # "to=<mumble>" field, third for pathological case where recipient
     # field is unterminated, forth when all else fails.
-    (($to) = $rejRmdr =~ /to=<([^>]+)>/o) ||
-	(($to) = $rejRmdr =~ /\d{3} <([^>]+)>: User unknown /o) ||
-	(($to) = $rejRmdr =~ /to=<(.*?)(?:[, ]|$)/o) ||
+    (($to) = $rejRmdr =~ /to=<([^>]+)>/) ||
+	(($to) = $rejRmdr =~ /\d{3} <([^>]+)>: User unknown /) ||
+	(($to) = $rejRmdr =~ /to=<(.*?)(?:[, ]|$)/) ||
 	($to = "<>");
     $to = lc($to) if($opts{'i'});
 
     # Snag sender address
-    (($from) = $rejRmdr =~ /from=<([^>]+)>/o) || ($from = "<>");
+    (($from) = $rejRmdr =~ /from=<([^>]+)>/) || ($from = "<>");
 
     if(defined($from)) {
 	$rejAddFrom = $opts{'rejAddFrom'};
@@ -1679,11 +1686,11 @@ sub proc_smtpd_reject {
     }
 
     # stash in "triple-subscripted-array"
-    if($rejReas =~ m/^Sender address rejected:/o) {
+    if($rejReas =~ m/^Sender address rejected:/) {
 	# Sender address rejected: Domain not found
 	# Sender address rejected: need fully-qualified address
 	++$rejects->{$rejTyp}{$rejReas}{$from};
-    } elsif($rejReas =~ m/^(Recipient address rejected:|User unknown( |$))/o) {
+    } elsif($rejReas =~ m/^(Recipient address rejected:|User unknown( |$))/) {
 	# Recipient address rejected: Domain not found
 	# Recipient address rejected: need fully-qualified address
 	# User unknown (in local/relay recipient table)
@@ -1693,15 +1700,15 @@ sub proc_smtpd_reject {
 	    $rejData .= "  (" . ($from? $from : gimme_domain($rejFrom)) . ")";
 	}
 	++$rejects->{$rejTyp}{$rejReas}{$rejData};
-    } elsif($rejReas =~ s/^.*?\d{3} (Improper use of SMTP command pipelining);.*$/$1/o) {
+    } elsif($rejReas =~ s/^.*?\d{3} (Improper use of SMTP command pipelining);.*$/$1/) {
 	# Was an IPv6 problem here
-	my ($src) = $logLine =~ /^.+? from (\S+?):.*$/o;
+	my ($src) = $logLine =~ /^.+? from (\S+?):.*$/;
 	++$rejects->{$rejTyp}{$rejReas}{$src};
-    } elsif($rejReas =~ s/^.*?\d{3} (Message size exceeds fixed limit);.*$/$1/o) {
+    } elsif($rejReas =~ s/^.*?\d{3} (Message size exceeds fixed limit);.*$/$1/) {
 	my $rejData = gimme_domain($rejFrom);
 	$rejData .= "  ($from)" if($rejAddFrom);
 	++$rejects->{$rejTyp}{$rejReas}{$rejData};
-    } elsif($rejReas =~ s/^.*?\d{3} (Server configuration (?:error|problem));.*$/(Local) $1/o) {
+    } elsif($rejReas =~ s/^.*?\d{3} (Server configuration (?:error|problem));.*$/(Local) $1/) {
 	my $rejData = gimme_domain($rejFrom);
 	$rejData .= "  ($from)" if($rejAddFrom);
 	++$rejects->{$rejTyp}{$rejReas}{$rejData};
@@ -1724,9 +1731,9 @@ sub verp_mung {
     my $addr = $_[0];
 
     if(defined($opts{'verpMung'})) {
-	$addr =~ s/((?:bounce[ds]?|no(?:list|reply|response)|return|sentto|\d+).*?)(?:[\+_\.\*-]\d+\b)+/$1-ID/oi;
+	$addr =~ s/((?:bounce[ds]?|no(?:list|reply|response)|return|sentto|\d+).*?)(?:[\+_\.\*-]\d+\b)+/$1-ID/i;
 	if($opts{'verpMung'} > 1) {
-	    $addr =~ s/[\*-](\d+[\*-])?[^=\*-]+[=\*][^\@]+\@/\@/o;
+	    $addr =~ s/[\*-](\d+[\*-])?[^=\*-]+[=\*][^\@]+\@/\@/;
 	}
     }
 
