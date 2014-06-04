@@ -6,6 +6,40 @@ ChangeLog for pflogsumm.pl
      http://jimsun.LinxNet.com/postfix_contrib.html.]
 
 
+rel-1.1.5	20120205
+
+    Fixed RFC 3339 support.  Releases 1.1.3 and 1.1.4 were badly broken
+    in this respect.  Thanks and a tip o' the hat to Sven Hoexter
+    (sven-at-timegate-dot-de) for the help.
+
+rel-1.1.4	20120201
+
+    Modified for compatibility with -o syslog_name=blurfl/submission
+    and -o syslog_name=blurfl/smtps set in master.cf.  (These are the
+    defaults in Postfix 2.9 and beyond.)
+
+	N.B.: This doesn't mean you'll get submission and
+	smtps broken-out separately from plain old smtp,
+	it simply means the presence of the new sub-strings
+	won't break Pflogsumm.
+
+    Changed "_"s (underscores) in option switches to "-"s (dashes).
+    (Underscores are still accepted.)  Thanks and a tip o' the hat
+    to David Landgren (david-at-landgren-dot-net) for the suggestion.
+
+    Removed switches deprecated in 1.1.3 from the docs.
+
+    Improved ISO timestamp parsing to account for optional fractional
+    seconds part.  (This is thrown-away by Pflogsumm.)
+
+    Minor updates to the FAQ.
+
+    Replaced "depreciated" with "deprecated" throughout.  Thanks and
+    a tip o' the hat to Rob Arista for the heads-up.
+
+    Fixed bug in host normalization function that was broken for
+    IPv4 addresses.
+
 rel-1.1.3	20100320
 
     Added long-awaited switches to optionally reduce detail reporting:
@@ -14,7 +48,7 @@ rel-1.1.3	20100320
     any of them to 0 suppresses that detail entirely.  --detail=N sets
     the default for all of them, as well as for -u=N and -h=N.
 
-    With the above enhancements, the following switches are depreciated,
+    With the above enhancements, the following switches are deprecated,
     and will eventually be removed: --no_bounce_detail,
     --no_deferral_detail, --no_reject_detail and --no_smtpd_warnings.
     They are replaced by setting the desired --*_detail=0.  They still
@@ -552,13 +586,13 @@ rel-1.0.1	20010518
 	    of VMailer prior to 19981023.
 
     NOTICE: As of this version of pflogsumm.pl, the "-c" switch is
-	    DEPRECIATED.  This version is transitional and retains it.
+	    DEPRECATED.  This version is transitional and retains it.
 	    The next version will not have it.  Subsequent versions
 	    may re-use it for another purpose.  Use the "-h" and "-u"
 	    switches instead.
 
     Added "-h" and "-u" switches to provide finer-grained control over
-    report output.  Depreciated "-c".
+    report output.  Deprecated "-c".
 
     Added "deferred" and "bounced" to "Grand Totals", "by-day" and "by-
     hour" reports.
